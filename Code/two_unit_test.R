@@ -34,8 +34,8 @@ two_unit_test = function(unit1, unit2, words_to_ignore) {
         mutate(se = sqrt(p*(1-p)*(1/total.x + 1/ total.y))) %>%
         mutate(z.score = (n.x /total.x - n.y / total.y) / se) %>%
         mutate(pval = 2*pnorm(-abs(z.score))) %>%
-        mutate(pval2 = binom.test(n = nn.x+nn.y, x = nn.x,
-                                  p = (total.x - nn.x) / (total.y + total.x - nn.x - nn.y),
+        mutate(pval2 = binom.test(n = n.x+n.y, x = n.x,
+                                  p = (total.x - n.x) / (total.y + total.x - n.x - n.y),
                                   alt = "two.sided")$p.value) %>%. #pvalue based on exact binomial test
     select(word, n.x, n.y, pval, pval2) 
 
