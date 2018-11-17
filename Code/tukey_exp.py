@@ -1,4 +1,6 @@
 import os, sys, re, time, csv
+import os
+import os.path
 import numpy as np 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -7,10 +9,10 @@ from word_lists import *
 from two_unit_test import two_unit_test
 
 
-# infile = '~/Data/speech_w_data_example.csv'
-infile = '../Data/speech_w_data_example.csv'
-# vocab_csv = '~/Data/list_of_1500words.csv'
-vocab_csv = '../Data/list_of_1500words.csv'
+# infile = '../Data/speech_w_data_example.csv'
+# vocab_csv = '../Data/list_of_1500words.csv'
+infile = os.path.expanduser('~/Data/speech_w_data_example.csv')
+vocab_csv = os.path.expanduser('~/Data/list_of_1500words.csv')
 resnames = ["Interval", "Date1", "Party1", "Affil1", "Date2", "Party2", "Affil2", "HC_score", "Features"]
 datanames = ['speech_id', 'date', 'congress_id', 'chamber', 'party', 'speech']
 
@@ -21,7 +23,7 @@ def calculate_line_breaks(infile):
     line_breaks = []
     date = '0'
     linenum = 0
-    with open(infile) as csvfile:
+    with open(infile, 'r', encoding = 'latin1') as csvfile:
         data = csv.reader(csvfile)
         next(data)
         for row in data:
@@ -86,6 +88,4 @@ def main():
                 b = time.time()
                 print("Time for running 1 iteration is {0:.3f} seconds".format(b - a))
 
-
-if __name__ == '__main__':
-    main()
+main()
