@@ -74,7 +74,8 @@ def main():
 
     # Iterate through units
     for interval in intervals:
-        outfile = '../Data/results_{}month.csv'.format(interval)
+        # outfile = '../Data/results_{}month.csv'.format(interval)
+        outfile = os.path.expanduser('~/Data/results_{}month.csv'.format(interval))
         with open(outfile, 'w', newline = '') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(resnames)
