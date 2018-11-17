@@ -8,15 +8,17 @@ from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 import re
 from nltk import word_tokenize          
 from nltk.stem import SnowballStemmer 
+import Stemmer
 class LemmaTokenizer(object):
-     def __init__(self):
-         self.wnl = SnowballStemmer(language = 'english')
-     def __call__(self, doc):
+    def __init__(self):
+         self.wnl = Stemmer.Stemmer('english')
+    def __call__(self, doc):
         doc = re.sub(r'[^A-Za-z0-9\s]',r' ',doc)
         doc = re.sub(r'\n',r' ',doc)
         doc = re.sub(r'[0-9]',r' ',doc)
+        doc = self.wnl.stemWord(doc)
         #doc = re.sub(r'[a-z]\040' ,r'',doc) #remove singletons
-        return [self.wnl.stem(t) for t in word_tokenize(doc)]
+        return word_tokenize(doc)
 
 import scipy.stats as stats
 from HC_aux import hc_vals
