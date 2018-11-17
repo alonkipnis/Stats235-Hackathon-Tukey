@@ -9,28 +9,10 @@ from two_unit_test import two_unit_test
 
 
 infile = '../Data/speech_w_data_example.csv'
+interval = 1
+outfile = '../Data/results_{}month.csv'.format(interval)
 vocab_csv = '../Data/list_of_1500words.csv'
-
-
-
-# Calculates the line breaks for each month of data
-# DO NOT USE FOR LARGE DATA: PANDAS RUNS OUT OF MEMORY
-def calculate_line_breaks2(infile):
-    df = pd.read_csv(infile, encoding = 'latin1')
-    date_counts = [(str(name)[:6], group.shape[0]) for name,group in df.groupby('date')]
-    dates = [date_counts[0][0]]
-    breaks = [0]
-    curr_count = 0
-    curr_date = dates[0]
-    for date,count in date_counts:
-        if date == curr_date:
-            curr_count += count
-        else:
-            dates.append(date)
-            breaks.append(curr_count)
-            curr_date = date
-            curr_count += count
-    return breaks, dates
+fieldnames = ["Interval", "Date1", "Party1", "Affil1", "Date2", "Party2", "Affil2", "HC_score", "Features"]
 
 
 # Calculates the line breaks for each month of data
@@ -63,10 +45,9 @@ def run_experiment(interval, unit1, unit2, parties, chambers, vocab_list, ignore
 
     # Write results to file
     dates = [str(unit1.date[2])[:6], str(unit2.date[2])[:6]]
-    with open('results_{}_{}.csv'.format(dates[0], dates[1]), 'w') as outfile:
-        writer = csv.writer(outfile)
-        line = [interval, dates[0], parties[0], chambers[0], dates[1], parties[1], chambers[1], hc]
-        line.extend(features)
+    with open(outfile, 'a', newline = '') as csvfile:
+        writer = csv.writer(csvfile)
+        line = [interval, dates[0], parties[0], chambers[0], dates[1], parties[1], chambers[1], hc, ",".join([str(f) for f in features])]
         writer.writerow(line)
         print("Results written to CSV")
 
@@ -78,22 +59,24 @@ def main():
     a = time.time()
     line_breaks, dates = calculate_line_breaks(infile)
     intervals = [1, 6, 12]
-    parties = ['D', 'R']
-    chambers = ['H', 'H']
+    parties = ["D", "R"]
+    chambers = ["H", "H"]
     congress_id = 114
     df = pd.read_csv(vocab_csv, encoding = 'latin1')
     vocab_list = list(df['word'])   # list of words to count
     ignore_list = words_to_ignore + function_words + additional_words1 + additional_words2 + singletons
     b = time.time()
     # print(line_breaks, dates)
+    with open(outfile, 'w', newline = '') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(fieldnames)
     print("Time for setup is {0:.3f} seconds".format(b - a))
 
 
     # Calculate units
     numunits = len(dates)
-    interval = 1
     for i in range(0, numunits, interval):
-        for j in range(i + 1, numunits, interval):
+        for j in range(i + interval, numunits, interval):
             a = time.time()
             unit1 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[i], nrows = line_breaks[i+interval] - line_breaks[i], names = ['speech_id', 'date', 'congress_id', 'chamber', 'party', 'speech'])
             unit2 = 0
@@ -102,10 +85,9 @@ def main():
             else:
                 unit2 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[j], nrows = line_breaks[j+interval] - line_breaks[j], names = ['speech_id', 'date', 'congress_id', 'chamber', 'party', 'speech'])
             print("Comparing units in {} and {}...".format(dates[i], dates[j]))
-            run_experiment(interval, unit1, unit2, parties, chambers, vocab_list, ignore_list)
+            run_experiment(j - i, unit1, unit2, parties, chambers, vocab_list, ignore_list)
             b = time.time()
             print("Time for running 1 iteration is {0:.3f} seconds".format(b - a))
-            sys.exit(2)
 
 
 
