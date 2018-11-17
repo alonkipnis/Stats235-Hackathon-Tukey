@@ -59,13 +59,13 @@ def calculate_line_breaks(infile):
 def run_experiment(interval, unit1, unit2, parties, chambers, vocab_list, ignore_list):
     unit1 = unit1.loc[(unit1.party == parties[0]) & (unit1.chamber == chambers[0]), ['speech_id', 'speech']]
     unit2 = unit2.loc[(unit2.party == parties[1]) & (unit2.chamber == chambers[1]), ['speech_id', 'speech']]
-    HC = two_unit_test(unit1, unit2, vocab_list)
+    hc, features = two_unit_test(unit1, unit2, vocab_list)
 
     # Write results to file
     dates = [str(unit1.date)[:6], str(unit2.date)[:6]]
     with open('results_{}_{}.csv'.format(dates[0], dates[1])) as outfile:
         writer = csv.writer(outfile)
-        line = [interval, dates[0], parties[0], chambers[0], dates[1], parties[1], chambers[1], HC.hc[0]]
+        line = [interval, dates[0], parties[0], chambers[0], dates[1], parties[1], chambers[1], hc]
         line.extend([feature for feature in HC.features])
         # line.extend([word for word in HC.words])
         writer.writerow(line)
