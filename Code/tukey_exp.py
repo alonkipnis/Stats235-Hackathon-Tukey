@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 
 from word_lists import *
 from two_unit_test import two_unit_test
-# from helper_tests import *
 
 
 infile = '../Data/speech_w_data_example.csv'
@@ -53,6 +52,17 @@ def run_experiment(interval, unit1, unit2, parties, chambers, vocab_list, ignore
 
 
 
+# Analyze the results by plotting HC over time
+def hc_analysis(outfile):
+    df = pd.read_csv(outfile)
+    fig, ax = plt.subplots()
+    fig2 = plt.plot(df.Interval, df.HC_score, 'bo')
+    plt.xlabel('Days Apart')
+    plt.ylabel('HC score')
+    plt.savefig('../Data/HC_vs_time_interval.png')
+
+
+
 # Calls sequence of experiments
 def main():
     # Experimental parameters / setup
@@ -66,7 +76,7 @@ def main():
     vocab_list = list(df['word'])   # list of words to count
     ignore_list = words_to_ignore + function_words + additional_words1 + additional_words2 + singletons
     b = time.time()
-    # print(line_breaks, dates)
+    print("There are {} units to compare".format(len(dates)))
     with open(outfile, 'w', newline = '') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(fieldnames)
@@ -75,7 +85,7 @@ def main():
 
     # Calculate units
     numunits = len(dates)
-    for i in range(0, numunits, interval):
+    for i in range(numunits-4, numunits, interval):
         for j in range(i + interval, numunits, interval):
             a = time.time()
             unit1 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[i], nrows = line_breaks[i+interval] - line_breaks[i], names = ['speech_id', 'date', 'congress_id', 'chamber', 'party', 'speech'])
@@ -88,6 +98,10 @@ def main():
             run_experiment(j - i, unit1, unit2, parties, chambers, vocab_list, ignore_list)
             b = time.time()
             print("Time for running 1 iteration is {0:.3f} seconds".format(b - a))
+
+
+    # Analyze results
+    hc_analysis(outfile)
 
 
 
