@@ -1,17 +1,14 @@
-library(readr)
+
 #find topics in congressional records using LDA
-library(dplyr)
-
 library(tidyverse)
-
 library(topicmodels)
 library(tidytext)
 library(tm)
 
-raw.corpus <- read_csv("./CongRec/speech_w_data.csv")
+raw.corpus <- read_csv("~/Downloads/speech_w_data.csv")
 
 unit1 <- raw.corpus %>%
-    filter(congress_id == 114) %>%
+    filter(congress_id %in% c(114,113)) %>%
     select(speech_id, speech)
 
 #unit2 <- raw.corpus %>%
@@ -27,6 +24,6 @@ unit1.dt <- unit1 %>%
     DTM <- unit1.dt %>%
   cast_dtm(speech_id, word, n)
 
-ap_lda <- LDA(DTM, k = 15, control = list(seed = 1234))
+ap_lda <- LDA(DTM, k = 20, control = list(seed = 1234))
 
 save(ap_lda, file = "result.RData")
