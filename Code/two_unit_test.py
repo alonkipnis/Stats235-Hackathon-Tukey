@@ -16,9 +16,8 @@ class LemmaTokenizer(object):
         doc = re.sub(r'[^A-Za-z0-9\s]',r' ',doc)
         doc = re.sub(r'\n',r' ',doc)
         doc = re.sub(r'[0-9]',r' ',doc)
-        doc = self.wnl.stemWord(doc)
         #doc = re.sub(r'[a-z]\040' ,r'',doc) #remove singletons
-        return word_tokenize(doc)
+        return word_tokenize(self.wnl.stemWord(doc))
 
 import scipy.stats as stats
 from HC_aux import hc_vals
@@ -69,7 +68,9 @@ def two_unit_test(unit1,unit2, list_of_words):
     
     #Pass in pval2, from binomial test, into HC function
     hc_result = hc_vals(word_counts['pval'], alpha = 0.4)
-    features = hc_result.p_sorted_idx[:hc_result.i_max_star]
-    return hc_result.hc, features
+    features_idx = hc_result.p_sorted_idx[:hc_result.i_max_star]
+    features = [list(word_counts['word'])[idx] for idx in features_idx]
+    features_idx_original = [idx for (idx,val) in enumerate(list_of_words) if val in features]
+    return hc_result.hc, features_idx_original
 
 
