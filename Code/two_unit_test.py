@@ -69,8 +69,8 @@ def two_unit_test(unit1,unit2, list_of_words):
     #Pass in pval2, from binomial test, into HC function
     hc_result = hc_vals(word_counts['pval'], alpha = 0.4)
     features_idx = hc_result.p_sorted_idx[:hc_result.i_max_star]
-    features = [list(word_counts['word'])[idx] for idx in features_idx]
-    features_idx_original = [idx for (idx,val) in enumerate(list_of_words) if val in features]
-    return hc_result.hc, features_idx_original
+    features_words = [list(word_counts['word'])[idx] for idx in features_idx]
+    features = [idx for (idx,val) in enumerate(list_of_words) if val in features_words]
+    return hc_result.hc, features
 
 

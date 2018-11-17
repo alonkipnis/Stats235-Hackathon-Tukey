@@ -1,16 +1,16 @@
 import os, sys, re, time, csv
 import numpy as np 
 import pandas as pd
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 from word_lists import *
 from two_unit_test import two_unit_test
 
 
-infile = '../Data/speech_w_data_example.csv'
+infile = '~/Data/speech_w_data_example.csv'
 interval = 1
-outfile = '../Data/results_{}month.csv'.format(interval)
-vocab_csv = '../Data/list_of_1500words.csv'
+outfile = '~/Data/results_{}month.csv'.format(interval)
+vocab_csv = '~/Data/list_of_1500words.csv'
 fieldnames = ["Interval", "Date1", "Party1", "Affil1", "Date2", "Party2", "Affil2", "HC_score", "Features"]
 
 
