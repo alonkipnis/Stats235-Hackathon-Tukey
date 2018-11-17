@@ -1,4 +1,6 @@
 import os, sys, re, time, csv
+import os
+import os.path
 import numpy as np 
 import pandas as pd
 # import matplotlib.pyplot as plt
@@ -8,10 +10,10 @@ from two_unit_test import two_unit_test
 # from helper_tests import *
 
 
-infile = '~/Data/speech_w_data_example.csv'
+infile = os.path.expanduser('~/Data/speech_w_data_example.csv')
 interval = 1
-outfile = '~/Data/results_{}month.csv'.format(interval)
-vocab_csv = '~/Data/list_of_1500words.csv'
+outfile = os.path.expanduser('~/Data/results_{}month.csv'.format(interval))
+vocab_csv = os.path.expanduser('~/Data/list_of_1500words.csv')
 fieldnames = ["Interval", "Date1", "Party1", "Affil1", "Date2", "Party2", "Affil2", "HC_score", "Features"]
 
 
@@ -91,5 +93,5 @@ def main():
 
 
 
-if __name__ == '__main__':
-    main()
+#if __name__ == '__main__':
+main()
