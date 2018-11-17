@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from word_lists import *
-import two_unit_test
+from two_unit_test import two_unit_test
 # from helper_tests import *
 
 
@@ -57,18 +57,18 @@ def calculate_line_breaks(infile):
 
 # Run an experiment with a set of parameters
 def run_experiment(interval, unit1, unit2, parties, chambers, vocab_list, ignore_list):
-    unit1 = unit1.loc[(unit1.party == parties[0]) & (unit1.chamber == chambers[0]), ['speech_id', 'speech']]
-    unit2 = unit2.loc[(unit2.party == parties[1]) & (unit2.chamber == chambers[1]), ['speech_id', 'speech']]
-    hc, features = two_unit_test(unit1, unit2, vocab_list)
+    comp_unit1 = unit1.loc[(unit1.party == parties[0]) & (unit1.chamber == chambers[0]), ['speech_id', 'speech']]
+    comp_unit2 = unit2.loc[(unit2.party == parties[1]) & (unit2.chamber == chambers[1]), ['speech_id', 'speech']]
+    hc, features = two_unit_test(comp_unit1, comp_unit2, vocab_list)
 
     # Write results to file
-    dates = [str(unit1.date)[:6], str(unit2.date)[:6]]
-    with open('results_{}_{}.csv'.format(dates[0], dates[1])) as outfile:
+    dates = [str(unit1.date[2])[:6], str(unit2.date[2])[:6]]
+    with open('results_{}_{}.csv'.format(dates[0], dates[1]), 'w') as outfile:
         writer = csv.writer(outfile)
         line = [interval, dates[0], parties[0], chambers[0], dates[1], parties[1], chambers[1], hc]
-        line.extend([feature for feature in HC.features])
-        # line.extend([word for word in HC.words])
+        line.extend(features)
         writer.writerow(line)
+        print("Results written to CSV")
 
 
 
@@ -94,6 +94,7 @@ def main():
     interval = 1
     for i in range(0, numunits, interval):
         for j in range(i + 1, numunits, interval):
+            a = time.time()
             unit1 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[i], nrows = line_breaks[i+interval] - line_breaks[i], names = ['speech_id', 'date', 'congress_id', 'chamber', 'party', 'speech'])
             unit2 = 0
             if j >= numunits - interval:
@@ -102,7 +103,10 @@ def main():
                 unit2 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[j], nrows = line_breaks[j+interval] - line_breaks[j], names = ['speech_id', 'date', 'congress_id', 'chamber', 'party', 'speech'])
             print("Comparing units in {} and {}...".format(dates[i], dates[j]))
             run_experiment(interval, unit1, unit2, parties, chambers, vocab_list, ignore_list)
+            b = time.time()
+            print("Time for running 1 iteration is {0:.3f} seconds".format(b - a))
             sys.exit(2)
+
 
 
 if __name__ == '__main__':

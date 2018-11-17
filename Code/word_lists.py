@@ -28,3 +28,10 @@ additional_words2 =  ['about','choice','proper','according','common','kind','pro
                       'probability']
 
 singletons = ['a','b','c','d','e','f','g','e','h','i','j','k','l','m','o','p','q','r','s','t','u','v','w','x','y','z']
+
+words_to_ignore = ['mr', 'unit','unanim', 'don', 'ask', 'presid','madam', 'american', 'make', 'nation',
+               'let','last', 'urg', 'year', 'new', 'didn', 'dosen', 'bil', 'print', 'speaker', 'men',
+                'side', 'yield', 'rank', 'rise', 'small', 'yet', 'yesterday', 'move', 'york', 'long', 
+               'yes', 'xii', 'go', 'billion', 'republican', 'democrat', 'congress', 'iv','iiv', 'doesnt', 'cant',
+                   'cannot', 'pelosi','weve','im','theyr', 'didnt', 'he', 'you', 'senat', 'hous', 'she',
+                   'dont', 'got']
