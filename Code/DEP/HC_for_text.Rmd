@@ -1,0 +1,214 @@
+---
+title: "HC_for_text"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#simple text processing functions
+
+truncate_text = function(raw_text, max_length) {
+  # truncate tail of raw_text to have max_length words (at most)
+  paste(unlist(strsplit(raw_text, " "))[1:max_length], sep = " ", collapse = " ")
+}
+
+sample_words = function(text, n) {
+ #returns n words from text by randomly sample them without replacements
+  paste(sample(unlist(strsplit(text, " ")), n, replace = FALSE), sep = " ", collapse = " ")
+}
+
+num_of_words = function(raw_text) {
+  #count number of words in raw_text
+  length(unlist(strsplit(raw_text, " ")))
+}
+
+count_words = function(raw_text, 
+                      ignore_list = c(""),
+                      min.counts = 0) {
+  # return the number of appearance of each word in raw_text
+  # pre-processing removes punctuation and words from the ignore_list
+  words <- tolower(raw_text)
+  words <- gsub("[[:punct:]]", " ", words)
+  words <- gsub('[0-9]+', " ", words)
+  words <- unlist(strsplit(words, " "))
+  words <- words[!words == ""]
+  words <- words[!words == " "]
+  words <- words[!words == "\n"]
+#  words <- wordStem(words)
+  
+  words <- words[!is.element(words, ignore_list)]
+  tble <- sort(table(words))
+  df <- as.data.frame(tble)
+  df <- filter(df, Freq >= min.counts)
+  df
+}
+
+reduce_counts = function(counts, word_list) {
+  # reduce the table of counts to words in word_list only
+  # (returns a list of counts_
+    
+  c <- rep(0, length(word_list))
+  
+  #df <- counts[counts$words %in% word_list,]
+  for(i in seq_along(word_list)) {
+    fr = counts$Freq[counts$words == word_list[i]]
+    if (length(fr) > 0) {
+      c[i] <- fr
+    }
+  }
+  c
+}
+
+get_word_frequency = function(text, words) {
+    #get frequency of usage of words in list 'words'
+        c0 = word_count(text)
+        freq = c0 / sum(c0)
+        ferq_common_words = reduce_counts(freq, words)
+}
+```
+
+
+
+
+```{r}
+library(readr)
+library(dplyr)
+library(tidyverse)
+library(data.table)
+library(SnowballC)
+
+setwd("~/Desktop/Fall_2018/Stats_285/Stats235-Hackathon-Tukey/Code")
+source("./HC_aux.R") #load functions for computing HC
+
+data <- read.csv("../Data/speech_w_data_example.csv", sep = "|")
+```
+
+```{r}
+data
+names(data)
+data %>% 
+    filter(phrasecount > 9, party == D, phrase)
+```
+
+Extract a list of distinguishing words (features) from all available data
+(we use the undisputed Federalists papers that contain enough written matrial by Hamilton, and the additional book: "An examination of the British doctrine... " by Madison.
+
+```{r}
+#feature exrtraction using all Ham and Mad texts
+
+
+# this list contains "contextual" words that are not useful for distinguishin between the authors 
+ignore_list = c('govern', 'trade', 
+                'enemi','govern', 'legislatur','xii', 'z',
+                'x', 'v', 'xi', 'xiii', 'vi', 'vii', 'ii',
+                'iii', 'ix', 'war','senat', 'constitut', 'treati',
+                'government', 'senate', 'president', 'jurisdiction',
+               'treaty', 'legislature', 'france', 'state', 's', 'laws','union', 'national', 'power',
+                'constitution','constitution', 'security','nations', 'british', 'states',
+               'commerce', 'courts', 'enemies', 'britain', 'citizens','citizen','public', 'system','treaties')
+
+corpus1 = ham.all
+corpus2 = c(mad.all, as.character(mad.external))
+
+l1 = number_of_words(corpus1)
+l2 = number_of_words(corpus2)
+
+EQUALIZE = TRUE
+#truncate longer corups to number of words of shorter corpus
+if(EQUALIZE) {
+    if(l1 > l2) {  
+    #text1 <- truncate_text(text1, l2)
+    corpus1 <- sample_words(corpus1, l2)
+    }
+    if(l2 > l1) {
+    #text2 <- truncate_text(text2, l1)
+    corpus2 <- sample_words(corpus2, l1)
+}}
+
+#count words
+c1 = as.data.frame(word_count(corpus1, min.counts = 5, ignore_list = ignore_list))
+c2 = as.data.frame(word_count(corpus2, min.counts = 5, ignore_list = ignore_list))
+df = merge(c1,c2,by = 'words')
+
+#compute p-values and HC w.r.t. H0 : B(c1+c2,1/2) 
+pv = p.values.binom_half(df[['Freq.x']], df[['Freq.y']], min.counts = 80, alt = "two.sided")
+
+hc = hc.vals(pv, alpha = 0.4, interp = FALSE)
+print(hc$hc.star)
+
+#extract list of distinguishing words
+avail_idcs = which(!is.na(pv))[hc$p.sorted_idx[1:hc$i.max.star]]
+feat = df$words
+dist_data = data_frame('word' = feat[avail_idcs],
+                       'p.value' = pv[avail_idcs],
+                       'Ham' = df[['Freq.x']][avail_idcs], 'Mad' = df[['Freq.y']][avail_idcs])
+dist_words = feat[avail_idcs]
+
+print("list of distinguishing words (features) and their p-value under B(n = sum.counts,p = 1/2):")
+print(dist_data)
+```
+
+```{r}
+#qq plots
+
+#jpeg('QQ_MM_MH_pairwise.jpg')
+qqplot(MM,MH, xlab = 'Mad-Mad', ylab = 'Mad-Ham', main = 'QQplot', ylim = c(0,4), xlim = c(0,4))
+abline(0,1)
+#dev.off()
+
+#jpeg('QQ_MM_MD_pairwise.jpg')
+qqplot(MM,MD, xlab = 'Mad-Mad', ylab = 'Mad-Disputed', main = 'QQplot', ylim = c(0,4), xlim = c(0,4))
+abline(0,1)
+#dev.off()
+
+#jpeg('QQ_HH_HM_pairwise.jpg')
+qqplot(HH,HM, xlab = 'Ham-Ham', ylab = 'Ham-Mad', main = 'QQplot',ylim = c(0,4), xlim = c(0,4))
+abline(0,1)
+#dev.off()
+
+#jpeg('QQ_HH_HD_pairwise.jpg')
+qqplot(HH,HD, xlab = 'Ham-Ham', ylab = 'Ham-Disputed', main = 'QQplot', ylim = c(0,4), xlim = c(0,4))
+abline(0,1)
+#dev.off()
+
+#jpeg('QQ_JJ_JD_pairwise.jpg')
+qqplot(JJ,JD, xlab = 'Joint-Joint', ylab = 'Joint-Disputed', main = 'QQplot', ylim = c(0,4), xlim = c(0,4))
+abline(0,1)
+#dev.off()
+```
+
+
+```{r}
+#lists of words used by Mosteller & Wallace
+#function words from Miller, Newman and Friedman 1958
+function_words = 
+  c('a','as','do','has','is','no','or','than','this','when',
+    'all','at','down','have','it','not','our','that','to','which',
+    'also','be','even','her','its','now','shall','the','up','who',
+    'an','been','every','his','may','of','should','their','upon','will',
+    'and','but','for','if','more','on','so','then','was','with',
+    'any','by','from','in','must','one','some','there','were','would',
+    'are','can','had','into','my','only','such','thing','what','your', 'hence'
+  )
+# two list of additional words used by Mosteller & Wallace
+additional_words1 = c('affect','city','direction','innovation','perhaps','vigor',
+                      'again','commonly','disgracing','join','rapid','violate','although',
+                      'consequently','either','language','sarne','violence','among','considerable',
+                      'enough','most','second','voice','another','contribute','nor','still',
+                      'where','because','defensive','fortune','offensive','those','whether',
+                      'between','destruction','function','often','throughout', 'while','both',
+                      'did','himself','pass','under','whilst')
+
+additional_words2 = c('about','choice','proper','according','common','kind','propriety','adversaries',
+                      'danger','large','provision','after','decide','decides','decided','deciding',
+                      'likely','requiisite','aid','degree','matters','matter','substance','always',
+                      'during','moreover','they','apt','expence','expences','necessary','though',
+                      'asserted','expenses','expense','necessity','necessities','truth','truths',
+                      'before','extent','others','us','being','follows','follow','particularly',
+                      'usages','usage','better','I','principle','we','care','imagine','edit','editing',
+                      'probability','work')
+```
+
