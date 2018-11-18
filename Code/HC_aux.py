@@ -36,8 +36,5 @@ def hc_vals(pv, alpha = 0.45, interp = False):
         hc_star    = z_max
         
     #Define a namedtuple hc_tuple to store the results
-    hc_tuple = namedtuple('hc_results',['hc', 'hc_star','i_max', 'i_max_star','z','uu','p','p_sorted', 'p_sorted_idx'])
     
-    hc_result = hc_tuple(hc = z_max, hc_star = hc_star, i_max = i_max, i_max_star = i_max_star,
-         z = z, uu = uu, p = pv, p_sorted = ps, p_sorted_idx = ps_idx)
-    return hc_result
+    return hc_star, pv[i_max_star]
