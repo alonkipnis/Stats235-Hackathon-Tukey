@@ -8,7 +8,7 @@ from two_unit_test import two_unit_test
 
 # infile = '../Data/speech_w_data_example.csv'
 # vocab_csv = '../Data/list_of_1500words.csv'
-infile = os.path.expanduser('~/Data/speech_w_data_example.csv')
+infile = os.path.expanduser('~/Data/speech_w_data.csv')
 vocab_csv = os.path.expanduser('~/Data/list_of_1500words.csv')
 resnames = ["Interval", "Date1", "Party1", "Affil1", "Date2", "Party2", "Affil2", "HC_score", "Features"]
 datanames = ['speech_id', 'date', 'congress_id', 'chamber', 'party', 'speech']
@@ -102,7 +102,7 @@ def main():
                 unit2 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[j], nrows = line_breaks[j+interval] - line_breaks[j], names = datanames)
                 print("Comparing units in {} and {}...".format(dates[i], dates[j]))
                 run_baseline(basefile, j - i, unit1, unit2, vocab_list, ignore_list)
-                run_experiment(outfile, j - i, unit1, unit2, parties, chambers, vocab_list, ignore_list)
+                # run_experiment(outfile, j - i, unit1, unit2, parties, chambers, vocab_list, ignore_list)
                 b = time.time()
                 print("Time for running 1 iteration is {0:.3f} seconds".format(b - a))
 
