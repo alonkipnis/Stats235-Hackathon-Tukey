@@ -4,7 +4,8 @@ import pandas as pd
 from exp_methods import *
 from word_lists import *
 from two_unit_test import two_unit_test
-line_breaks, dates = calculate_line_breaks(infile)
+skiplines = 55
+line_breaks, dates = calculate_line_breaks(infile, skiplines)
 numunits = len(dates)
 intervals = [1, 3, 6, 12]
 df = pd.read_csv(vocab_csv, encoding = 'latin1')
