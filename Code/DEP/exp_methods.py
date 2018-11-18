@@ -52,12 +52,13 @@ def build_params(intervals, nummonths, topic_lists = None):
     params_list = []
     if topic_lists is None:
         for interval in intervals:
-            for i in range(0, nummonths - 2 * interval, interval):
-                params_list.append([interval, i, ['N', 'N']])
-                params_list.append([interval, i, ['D', 'D']])
-                params_list.append([interval, i, ['D', 'R']])
+            # for i in range(0, nummonths - 2 * interval, interval):
+            for i in range(0, nummonths - interval, interval):
+                # params_list.append([interval, i, ['N', 'N']])
+                # params_list.append([interval, i, ['D', 'D']])
+                # params_list.append([interval, i, ['D', 'R']])
                 params_list.append([interval, i, ['R', 'D']])
-                params_list.append([interval, i, ['R', 'R']])
+                # params_list.append([interval, i, ['R', 'R']])
     else:
         for interval in intervals:
             for i in range(0, nummonths - 2 * interval, interval):
@@ -73,7 +74,8 @@ def build_params(intervals, nummonths, topic_lists = None):
 
 # Run an experiment with a set of parameters
 def run_text_experiment(infile, interval, i, line_breaks, dates, vocab_list, parties):
-    for j in range(i + interval, len(dates) - interval, interval):
+    # for j in range(i + interval, len(dates) - interval, interval):
+    for j in range(i, len(dates) - interval, interval):
         print("Comparing text in units {} and {} between {} parties...".format(dates[i], dates[j], parties))
         unit1 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[i], nrows = line_breaks[i+interval] - line_breaks[i], names = datanames)
         unit2 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[j], nrows = line_breaks[j+interval] - line_breaks[j], names = datanames)
@@ -90,6 +92,7 @@ def run_text_experiment(infile, interval, i, line_breaks, dates, vocab_list, par
             comp_unit1 = unit1.loc[(unit1.party == parties[0]), ['speech_id', 'speech']]
             comp_unit2 = unit2.loc[(unit2.party == parties[1]), ['speech_id', 'speech']]
 
+        # print(comp_unit1.shape, comp_unit2.shape, len(vocab_list))
         hc, features = None, None
         try:
             hc, features = two_unit_test(comp_unit1, comp_unit2, vocab_list)
@@ -98,14 +101,14 @@ def run_text_experiment(infile, interval, i, line_breaks, dates, vocab_list, par
 
         # Write results to file
         outfile = None
-        if cluster:
+        if on_cluster:
             outfile = os.path.expanduser('~/Data/results_{}_{}_{}.csv'.format(interval, parties[0], parties[1]))
         else:
             outfile = '../Data/results_{}_{}_{}.csv'.format(interval, parties[0], parties[1])
         unit_dates = [str(unit1.date[2])[:6], str(unit2.date[2])[:6]]
         with open(outfile, 'a', newline = '') as csvfile:
             writer = csv.writer(csvfile)
-            line = [j - i, unit_dates[0], parties[0], dates[1], parties[1], hc, ','.join([str(f) for f in features])]
+            line = [j - i, unit_dates[0], parties[0], unit_dates[1], parties[1], hc, ','.join([str(f) for f in features])]
             writer.writerow(line)
 
 
