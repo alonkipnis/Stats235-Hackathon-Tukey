@@ -35,6 +35,20 @@ def calculate_line_breaks(infile):
     return line_breaks, dates
 
 
+def run_baseline(outfile, interval, unit1, unit2, vocab_list, ignore_list):
+    comp_unit1 = unit1.loc[:, ['speech_id', 'speech']]
+    comp_unit2 = unit2.loc[:, ['speech_id', 'speech']]
+    hc, features = two_unit_test(comp_unit1, comp_unit2, vocab_list)
+
+    # Write results to file
+    dates = [str(unit1.date[2])[:6], str(unit2.date[2])[:6]]
+    with open(outfile, 'a', newline = '') as csvfile:
+        writer = csv.writer(csvfile)
+        line = [interval, dates[0], dates[1], hc, ','.join([str(f) for f in features])]
+        writer.writerow(line)
+        print("Baseline results written to CSV")
+
+
 
 # Run an experiment with a set of parameters
 def run_experiment(outfile, interval, unit1, unit2, parties, chambers, vocab_list, ignore_list):
@@ -46,9 +60,9 @@ def run_experiment(outfile, interval, unit1, unit2, parties, chambers, vocab_lis
     dates = [str(unit1.date[2])[:6], str(unit2.date[2])[:6]]
     with open(outfile, 'a', newline = '') as csvfile:
         writer = csv.writer(csvfile)
-        line = [interval, dates[0], parties[0], chambers[0], dates[1], parties[1], chambers[1], hc, ",".join([str(f) for f in features])]
+        line = [interval, dates[0], parties[0], chambers[0], dates[1], parties[1], chambers[1], hc, ','.join([str(f) for f in features])]
         writer.writerow(line)
-        print("Results written to CSV")
+        print("DR-H results written to CSV")
 
 
 # Calls sequence of experiments
@@ -57,9 +71,9 @@ def main():
     a = time.time()
     line_breaks, dates = calculate_line_breaks(infile)
     numunits = len(dates)
-    intervals = [1]
-    parties = ["D", "R"]
-    chambers = ["H", "H"]
+    intervals = [1, 6, 12]
+    parties = ['D', 'R']
+    chambers = ['H', 'H']
     congress_id = 114
     df = pd.read_csv(vocab_csv, encoding = 'latin1')
     vocab_list = list(df['word'])   # list of words to count
@@ -71,17 +85,23 @@ def main():
 
     # Iterate through units
     for interval in intervals:
+        # basefile = '../Data/results_baseline_{}month.csv'.format(interval)
         # outfile = '../Data/results_{}month.csv'.format(interval)
+        basefile = os.path.expanduser('~/Data/results_baseline_{}month.csv'.format(interval))
         outfile = os.path.expanduser('~/Data/results_{}month.csv'.format(interval))
         with open(outfile, 'w', newline = '') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(resnames)
-        for i in range(0, numunits, interval):
+        with open(basefile, 'w', newline = '') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(['Interval', 'Date1', 'Date2', 'HC_score', 'Features'])
+        for i in range(0, numunits - 2 * interval):
             for j in range(i + interval, numunits - interval):
                 a = time.time()
                 unit1 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[i], nrows = line_breaks[i+interval] - line_breaks[i], names = datanames)
                 unit2 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[j], nrows = line_breaks[j+interval] - line_breaks[j], names = datanames)
                 print("Comparing units in {} and {}...".format(dates[i], dates[j]))
+                run_baseline(basefile, j - i, unit1, unit2, vocab_list, ignore_list)
                 run_experiment(outfile, j - i, unit1, unit2, parties, chambers, vocab_list, ignore_list)
                 b = time.time()
                 print("Time for running 1 iteration is {0:.3f} seconds".format(b - a))
