@@ -68,8 +68,9 @@ def two_unit_test(unit1,unit2, list_of_words):
                                                         row['T2']), axis=1)
     
     #Pass in pval2, from binomial test, into HC function
-    hc_result = hc_vals(word_counts['pval'], alpha = 0.4)
-    features = [idx for (idx,val) in enumerate(np.asarray(word_counts['pval'])) if val < hc_result.p_max_star]
+    hc_star, p_val_star  = hc_vals(word_counts['pval'], alpha = 0.4)
+    word_counts['flag'] = word_counts['pval'] < p_val_star
+    features = np.where(word_counts['flag'] == True)
     return (hc_result.hc, features)
 
 
