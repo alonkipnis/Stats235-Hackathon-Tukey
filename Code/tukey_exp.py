@@ -16,5 +16,6 @@ vocab_list = list(df['word'])   # list of words to count
 params = build_params(intervals, numunits)
 
 # Optimized for CJ parrun
-for param in params:
+for i in range(len(params)):
+    param=params[i]
     run_experiment(infile, param[0], param[2]-param[1], param[1], param[2], line_breaks, dates, vocab_list, param[3])
