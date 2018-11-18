@@ -21,7 +21,7 @@ datanames = ['speech_id', 'date', 'congress_id', 'chamber', 'party', 'speech']
 
 
 # Calculates the line breaks for each month of data
-def calculate_line_breaks(infile, skiplines):
+def calculate_line_breaks(infile, skip_lines):
     dates = []
     line_breaks = []
     date = '0'
@@ -38,9 +38,9 @@ def calculate_line_breaks(infile, skiplines):
                 line_breaks.append(linenum)
                 date = curr_date
                 linenum += 1
-    if skiplines > len(dates):
-        skiplines = 0
-    return line_breaks[skiplines:], dates[skiplines:]
+    if skip_lines > len(dates):
+        skip_lines = 0
+    return line_breaks[skip_lines:], dates[skip_lines:]
 
 
 
