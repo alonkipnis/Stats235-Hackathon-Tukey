@@ -1,9 +1,6 @@
 import os, sys, re, time, csv
-import os
-import os.path
 import numpy as np 
 import pandas as pd
-import matplotlib.pyplot as plt
 
 from word_lists import *
 from two_unit_test import two_unit_test

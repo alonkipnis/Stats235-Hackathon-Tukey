@@ -1,7 +1,6 @@
 import os, sys, re, time, csv
 import numpy as np 
 import pandas as pd
-import matplotlib.pyplot as plt
 
 from word_lists import *
 from two_unit_test import two_unit_test
@@ -27,7 +26,10 @@ def main():
     vocab_df = pd.read_csv(vocab_csv, encoding = 'latin1')
     vocab_list = list(vocab_df['word']) 
     results_df = pd.read_csv(outfile)
-    print(results_df.head(1))
+    
+    find_words(1)
+
+
     # hc_plot(results_df)
 
 
