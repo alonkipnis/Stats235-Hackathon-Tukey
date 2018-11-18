@@ -9,6 +9,7 @@ from two_unit_test import two_unit_test
 
 
 # Experimental parameters / setup
+skiplines = 55
 line_breaks, dates = calculate_line_breaks(infile, skiplines)
 numunits = len(dates)
 intervals = [1, 3, 6, 12]
