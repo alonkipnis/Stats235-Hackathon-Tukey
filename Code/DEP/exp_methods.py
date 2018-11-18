@@ -2,7 +2,6 @@ import os, sys, re, time, csv
 import numpy as np 
 import pandas as pd
 
-from word_lists import *
 from two_unit_test import two_unit_test
 
 
@@ -45,10 +44,10 @@ def calculate_line_breaks(infile, skip_lines):
 
 
 # Make parameters to loop through
-def build_params(intervals, numunits):
+def build_params(intervals, nummonths):
     params_list = []
     for interval in intervals:
-        for i in range(0, numunits - 2 * interval, interval):
+        for i in range(0, nummonths - 2 * interval, interval):
             params_list.append([interval, i, ['N', 'N']])
             params_list.append([interval, i, ['D', 'D']])
             params_list.append([interval, i, ['D', 'R']])
@@ -84,8 +83,8 @@ def run_experiment(infile, interval, i, line_breaks, dates, vocab_list, parties)
             outfile = os.path.expanduser('~/Data/results_{}_{}_{}.csv'.format(interval, parties[0], parties[1]))
         else:
             outfile = '../Data/results_{}_{}_{}.csv'.format(interval, parties[0], parties[1])
-        dates = [str(unit1.date[2])[:6], str(unit2.date[2])[:6]]
+        unit_dates = [str(unit1.date[2])[:6], str(unit2.date[2])[:6]]
         with open(outfile, 'a', newline = '') as csvfile:
             writer = csv.writer(csvfile)
-            line = [j - i, dates[0], parties[0], dates[1], parties[1], hc, ','.join([str(f) for f in features])]
+            line = [j - i, unit_dates[0], parties[0], dates[1], parties[1], hc, ','.join([str(f) for f in features])]
             writer.writerow(line)
