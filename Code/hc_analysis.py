@@ -6,7 +6,7 @@ from word_lists import *
 from two_unit_test import two_unit_test
 
 
-outfile = '../Data/results_1month.csv'
+outfile = '../Data/results_baseline.csv'
 vocab_csv = '../Data/list_of_1500words.csv'
 
 
@@ -22,12 +22,16 @@ def hc_plot(df):
 
 
 
+
+
+
+
 def main():
     vocab_df = pd.read_csv(vocab_csv, encoding = 'latin1')
     vocab_list = list(vocab_df['word']) 
     results_df = pd.read_csv(outfile)
     
-    find_words(1)
+    find_words(1, )
 
 
     # hc_plot(results_df)
