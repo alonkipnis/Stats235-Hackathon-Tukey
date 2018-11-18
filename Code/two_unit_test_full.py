@@ -32,7 +32,6 @@ def hc_vals(pv, alpha = 0.45, interp = False):
         hc_star    = z_max
         
     #Define a namedtuple hc_tuple to store the results
-    
     return hc_star, pv[i_max_star]
 
 import re
@@ -47,7 +46,6 @@ class LemmaTokenizer(object):
         doc = re.sub(r'[0-9]',r' ',doc)
         #doc = re.sub(r'[a-z]\040' ,r'',doc) #remove singletons
         return word_tokenize(self.wnl.stem(doc))
-
 
 def two_unit_test_full(unit1,unit2, list_of_words):
 # Input: unit1, unit2, which are dataframes with columns: speech_id (integer) , speech (string)
