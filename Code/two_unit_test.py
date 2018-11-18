@@ -36,8 +36,10 @@ def get_pval(z_score):
     pval = 2 * stats.norm.cdf(-np.abs(z_score))
     return pval
 
-def get_pval2(freq_x, freq_y,total_x,total_y):
-    pval2 = stats.binom_test(x = freq_x, n = freq_x + freq_y, 
+def get_pval2(freq_x, freq_y,total_x,total_y, min_counts = 1):
+    pval2 = np.nan
+    if (freq_x + freq_y >= min_counts):
+        pval2 = stats.binom_test(x = freq_x, n = freq_x + freq_y, 
                                   p = (total_x - freq_x) / np.float((total_y + total_x - freq_x - freq_y)))
     return pval2
 
@@ -60,7 +62,6 @@ def two_unit_test(unit1,unit2, list_of_words):
     word_counts['T2'] = word_counts['n2'].sum()
     
     #Joining unit1 and unit2 for the HC computation
-    word_counts = word_counts[word_counts['n1'] + word_counts['n2'] >= 10] 
     word_counts['pval'] = word_counts.apply(lambda row: get_pval2(row['n1'], 
                                                          row['n2'], 
                                                          row['T1'],
@@ -68,9 +69,7 @@ def two_unit_test(unit1,unit2, list_of_words):
     
     #Pass in pval2, from binomial test, into HC function
     hc_result = hc_vals(word_counts['pval'], alpha = 0.4)
-    features_idx = hc_result.p_sorted_idx[:hc_result.i_max_star]
-    features_words = [list(word_counts['word'])[idx] for idx in features_idx]
-    features = [idx for (idx,val) in enumerate(list_of_words) if val in features_words]
-    return hc_result.hc, features
+    features = [idx for (idx,val) in enumerate(np.asarray(word_counts['pval'])) if val < hc_result.p_max_star]
+    return (hc_result.hc, features)
 
 
