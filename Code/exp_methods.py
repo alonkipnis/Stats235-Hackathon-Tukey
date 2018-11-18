@@ -54,8 +54,13 @@ def build_params(intervals, numunits):
 # Run an experiment with a set of parameters
 def run_experiment(infile, interval, diff, i, j, line_breaks, dates, vocab_list, parties):
     print("Comparing units in {} and {} between {}...".format(dates[i], dates[j], parties))
-    unit1 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[i], nrows = line_breaks[i+diff] - line_breaks[i], names = datanames)
-    unit2 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[j], nrows = line_breaks[j+diff] - line_breaks[j], names = datanames)
+    unit1 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[i], nrows = line_breaks[i+interval] - line_breaks[i], names = datanames)
+    unit2 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[j], nrows = line_breaks[j+interval] - line_breaks[j], names = datanames)
+
+    # Stop early if there's not enough speeches
+    if unit1.shape[0] < 400 or unit2.shape[0] < 400:
+        return
+    
     comp_unit1, comp_unit2 = None, None
     if parties == ['N', 'N']:
         comp_unit1 = unit1.loc[:, ['speech_id', 'speech']]
