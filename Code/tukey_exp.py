@@ -71,7 +71,7 @@ def main():
     a = time.time()
     line_breaks, dates = calculate_line_breaks(infile)
     numunits = len(dates)
-    intervals = [1]
+    intervals = [1, 6, 12]
     parties = ['D', 'R']
     chambers = ['H', 'H']
     congress_id = 114
@@ -85,9 +85,9 @@ def main():
 
     # Iterate through units
     for interval in intervals:
-        # basefile = '../Data/results_baseline.csv'
+        # basefile = '../Data/results_baseline_{}month.csv'.format(interval)
         # outfile = '../Data/results_{}month.csv'.format(interval)
-        basefile = os.path.expanduser('~/Data/results_baseline.csv')
+        basefile = os.path.expanduser('~/Data/results_baseline_{}month.csv'.format(interval))
         outfile = os.path.expanduser('~/Data/results_{}month.csv'.format(interval))
         with open(outfile, 'w', newline = '') as csvfile:
             writer = csv.writer(csvfile)
@@ -95,14 +95,14 @@ def main():
         with open(basefile, 'w', newline = '') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(['Interval', 'Date1', 'Date2', 'HC_score', 'Features'])
-        for i in range(0, numunits, interval):
+        for i in range(0, numunits - 2 * interval):
             for j in range(i + interval, numunits - interval):
                 a = time.time()
                 unit1 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[i], nrows = line_breaks[i+interval] - line_breaks[i], names = datanames)
                 unit2 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[j], nrows = line_breaks[j+interval] - line_breaks[j], names = datanames)
                 print("Comparing units in {} and {}...".format(dates[i], dates[j]))
                 run_baseline(basefile, j - i, unit1, unit2, vocab_list, ignore_list)
-                # run_experiment(outfile, j - i, unit1, unit2, parties, chambers, vocab_list, ignore_list)
+                run_experiment(outfile, j - i, unit1, unit2, parties, chambers, vocab_list, ignore_list)
                 b = time.time()
                 print("Time for running 1 iteration is {0:.3f} seconds".format(b - a))
 
