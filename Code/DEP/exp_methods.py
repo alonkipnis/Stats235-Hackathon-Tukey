@@ -26,7 +26,7 @@ def calculate_line_breaks(infile, skip_lines):
     line_breaks = []
     date = '0'
     linenum = 0
-    with open(infile, 'r') as csvfile:
+    with open(infile, 'rt', encoding = 'latin1') as csvfile:
         data = csv.reader(csvfile)
         next(data)
         for row in data:
