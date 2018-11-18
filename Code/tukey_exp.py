@@ -9,8 +9,7 @@ from two_unit_test import two_unit_test
 
 
 # Experimental parameters / setup
-skiplines = 55
-line_breaks, dates = calculate_line_breaks(infile, skiplines)
+line_breaks, dates = calculate_line_breaks(infile)
 numunits = len(dates)
 intervals = [1, 3, 6, 12]
 df = pd.read_csv(vocab_csv, encoding = 'latin1')

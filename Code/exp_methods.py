@@ -8,6 +8,7 @@ from two_unit_test import two_unit_test
 skiplines = 55
 speech_count_thresh = 300
 cluster = 1
+infile, vocab_csv = None, None
 if cluster:
     infile = os.path.expanduser('~/Data/speech_w_data.csv')
     vocab_csv = os.path.expanduser('~/Data/list_of_1500words.csv')
