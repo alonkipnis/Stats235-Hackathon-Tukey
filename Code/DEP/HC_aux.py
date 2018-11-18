@@ -34,4 +34,4 @@ def hc_vals(pv, alpha = 0.45, interp = False):
         i_max_star = i_max
         hc_star    = z_max
         
-    return hc_star, pv[i_max_star]
+    return hc_star, ps[i_max_star]

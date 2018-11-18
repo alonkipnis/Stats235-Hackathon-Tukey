@@ -6,10 +6,10 @@ from word_lists import *
 from two_unit_test import two_unit_test
 
 
-infile = '../Data/speech_w_data_example.csv'
-vocab_csv = '../Data/list_of_1500words.csv'
-# infile = os.path.expanduser('~/Data/speech_w_data.csv')
-# vocab_csv = os.path.expanduser('~/Data/list_of_1500words.csv')
+#infile = '../Data/speech_w_data_example.csv'
+#vocab_csv = '../Data/list_of_1500words.csv'
+infile = os.path.expanduser('~/Data/speech_w_data.csv')
+vocab_csv = os.path.expanduser('~/Data/list_of_1500words.csv')
 resnames = ["Interval", "Date1", "Party1", "Affil1", "Date2", "Party2", "Affil2", "HC_score", "Features"]
 datanames = ['speech_id', 'date', 'congress_id', 'chamber', 'party', 'speech']
 
@@ -71,8 +71,8 @@ def run_experiment(infile, interval, diff, i, j, line_breaks, dates, vocab_list,
     hc, features = two_unit_test(comp_unit1, comp_unit2, vocab_list)
 
     # Write results to file
-    outfile = '../Data/results_{}_{}_{}.csv'.format(interval, parties[0], parties[1])
-    # outfile = os.path.expanduser('~/Data/results_{}_{}_{}.csv'.format(interval, parties[0], parties[1]))
+    #outfile = '../Data/results_{}_{}_{}.csv'.format(interval, parties[0], parties[1])
+    outfile = os.path.expanduser('~/Data/results_{}_{}_{}.csv'.format(interval, parties[0], parties[1]))
     dates = [str(unit1.date[2])[:6], str(unit2.date[2])[:6]]
     with open(outfile, 'a', newline = '') as csvfile:
         writer = csv.writer(csvfile)

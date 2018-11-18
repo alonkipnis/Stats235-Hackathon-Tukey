@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from HC_aux import hc_vals
 
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 
 import re
 from nltk import word_tokenize          
