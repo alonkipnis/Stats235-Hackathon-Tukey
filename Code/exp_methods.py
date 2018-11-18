@@ -5,7 +5,7 @@ import pandas as pd
 from word_lists import *
 from two_unit_test import two_unit_test
 
-skiplines = 55
+
 speech_count_thresh = 300
 cluster = 1
 infile, vocab_csv = None, None
