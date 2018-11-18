@@ -66,7 +66,7 @@ def run_experiment(infile, interval, i, line_breaks, dates, vocab_list, parties)
 
         # Stop early if there's not enough speeches
         if unit1.shape[0] < speech_count_thresh or unit2.shape[0] < speech_count_thresh:
-            return
+            continue
         
         comp_unit1, comp_unit2 = None, None
         if parties == ['N', 'N']:
@@ -75,7 +75,12 @@ def run_experiment(infile, interval, i, line_breaks, dates, vocab_list, parties)
         else:
             comp_unit1 = unit1.loc[(unit1.party == parties[0]), ['speech_id', 'speech']]
             comp_unit2 = unit2.loc[(unit2.party == parties[1]), ['speech_id', 'speech']]
-        hc, features = two_unit_test(comp_unit1, comp_unit2, vocab_list)
+
+        hc, features = None, None
+        try:
+            hc, features = two_unit_test(comp_unit1, comp_unit2, vocab_list)
+        except:
+            continue
 
         # Write results to file
         outfile = None
