@@ -2,30 +2,27 @@ import os, sys, re, time, csv
 import numpy as np 
 import pandas as pd
 
-sys.path.append('./DEP')
+# sys.path.append('./DEP')
 import word_lists
 from exp_methods import *
 
 
 # Experimental parameters / setup
-skiplines = 367  # 48 to start from 198701
+skiplines = 48  # 48 to start from 198701
 # line_breaks, dates = calculate_line_breaks(infile, skiplines)
 saved_breaks, saved_dates = word_lists.line_breaks[skiplines:], word_lists.dates[skiplines:]
 nummonths = len(saved_dates)
-print(saved_dates[0], nummonths)
-# sys.exit(2)
+print("Starting from {}, with {} total months considered".format(saved_dates[0], nummonths))
 df = pd.read_csv(vocab_csv, encoding = 'latin1')
 vocab_list = list(df['word'])   # list of words to count
 topic_25_list = pd.read_csv(topic_25_csv, encoding = 'latin1')
 topic_75_list = pd.read_csv(topic_75_csv, encoding = 'latin1')
 
 
-intervals = [19]   # intervals used for text
+intervals = [6, 12]   # intervals used for text
 params = build_params(intervals, nummonths)
 # intervals = [3, 12]         # intervals used for topics
 # params = build_params(intervals, nummonths, [topic_25_list, topic_75_list])
-# print(len(params))
-# sys.exit(2)
 
 
 # Optimized for CJ parrun

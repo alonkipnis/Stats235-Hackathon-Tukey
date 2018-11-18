@@ -6,8 +6,8 @@ from two_unit_test import two_unit_test
 
 
 speech_count_thresh = 300
-on_cluster = False
-infile, vocab_csv = None, None
+on_cluster = True
+infile, vocab_csv, topic_25_csv, topic_75_csv = None, None, None, None
 if on_cluster:
     infile = os.path.expanduser('~/Data/speech_w_data.csv')
     vocab_csv = os.path.expanduser('~/Data/list_of_1500words.csv')
@@ -52,13 +52,13 @@ def build_params(intervals, nummonths, topic_lists = None):
     params_list = []
     if topic_lists is None:
         for interval in intervals:
-            # for i in range(0, nummonths - 2 * interval, interval):
-            for i in range(0, nummonths - interval, interval):
-                # params_list.append([interval, i, ['N', 'N']])
-                # params_list.append([interval, i, ['D', 'D']])
-                # params_list.append([interval, i, ['D', 'R']])
+            for i in range(0, nummonths - 2 * interval, interval):
+            # for i in range(0, nummonths - interval, interval):
+                params_list.append([interval, i, ['N', 'N']])
+                params_list.append([interval, i, ['D', 'D']])
+                params_list.append([interval, i, ['D', 'R']])
                 params_list.append([interval, i, ['R', 'D']])
-                # params_list.append([interval, i, ['R', 'R']])
+                params_list.append([interval, i, ['R', 'R']])
     else:
         for interval in intervals:
             for i in range(0, nummonths - 2 * interval, interval):
@@ -74,8 +74,8 @@ def build_params(intervals, nummonths, topic_lists = None):
 
 # Run an experiment with a set of parameters
 def run_text_experiment(infile, interval, i, line_breaks, dates, vocab_list, parties):
-    # for j in range(i + interval, len(dates) - interval, interval):
-    for j in range(i, len(dates) - interval, interval):
+    for j in range(i + interval, len(dates) - interval, interval):
+    # for j in range(i, len(dates) - interval, interval):
         print("Comparing text in units {} and {} between {} parties...".format(dates[i], dates[j], parties))
         unit1 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[i], nrows = line_breaks[i+interval] - line_breaks[i], names = datanames)
         unit2 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[j], nrows = line_breaks[j+interval] - line_breaks[j], names = datanames)
@@ -140,7 +140,7 @@ def run_topic_experiment(infile, interval, i, line_breaks, dates, topic_list, pa
 
         # Write results to file
         outfile = None
-        if cluster:
+        if on_cluster:
             outfile = os.path.expanduser('~/Data/results_topics{}_{}_{}_{}.csv'.format(topic_list.shape[1]-2, interval, parties[0], parties[1]))
         else:
             outfile = '../Data/results_topics{}_{}_{}_{}.csv'.format(topic_list.shape[1]-2, interval, parties[0], parties[1])
