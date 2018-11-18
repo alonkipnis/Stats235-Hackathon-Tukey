@@ -87,5 +87,5 @@ def run_experiment(infile, interval, i, line_breaks, dates, vocab_list, parties)
         dates = [str(unit1.date[2])[:6], str(unit2.date[2])[:6]]
         with open(outfile, 'a', newline = '') as csvfile:
             writer = csv.writer(csvfile)
-            line = [diff, dates[0], parties[0], dates[1], parties[1], hc, ','.join([str(f) for f in features])]
+            line = [j - i, dates[0], parties[0], dates[1], parties[1], hc, ','.join([str(f) for f in features])]
             writer.writerow(line)
