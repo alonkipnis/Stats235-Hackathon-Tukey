@@ -36,7 +36,7 @@ def get_pval(z_score):
     pval = 2 * stats.norm.cdf(-np.abs(z_score))
     return pval
 
-def get_pval2(freq_x, freq_y,total_x,total_y, min_counts = 1):
+def get_pval2(freq_x, freq_y,total_x,total_y, min_counts = 10):
     pval2 = np.nan
     if (freq_x + freq_y >= min_counts):
         pval2 = stats.binom_test(x = freq_x, n = freq_x + freq_y, 
