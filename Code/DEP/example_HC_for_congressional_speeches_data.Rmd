@@ -17,7 +17,7 @@ Use HC to detect changes
 ```{r}
 #load speech data
 library(readr)
-setwd("~/Desktop/Fall_2018/Stats_285/Stats235-Hackathon-Tukey/Code")
+setwd("~/Desktop/Fall_2018/Stats_285/hackathon_local/Code")
 raw.corpus <- read_csv("../Data/speech_w_data_example.csv")
 ```
 ```{r}
@@ -25,12 +25,18 @@ raw.corpus <- read_csv("../Data/speech_w_data_example.csv")
 library(tidyverse)
 
 unit1 <- raw.corpus %>%
-    filter(party == 'R', chamber == 'H', congress_id == 114) %>%   # (R)ebulican party (H)ouse speeches from 114th congress
+    filter(party == 'R', chamber == 'H', date >= 20150100, congress_id == 114) %>%
+  filter(date < 20150200) %>% # (R)ebulican party (H)ouse speeches from 114th congress
     select(speech_id, speech)
 
+head(raw.corpus)
+
 unit2 <- raw.corpus %>%
-    filter(party == 'D', chamber == 'H', congress_id == 114) %>%  # (D)emocratic party (H)ouse speeches from 114th congress
-    select(speech_id, speech)
+    filter(party == 'D', chamber == 'H', date >= 20150100, congress_id == 114)%>%
+    filter(date < 20150200) %>% # (D)emocratic party (H)ouse speeches from 114th congress
+  select(speech_id, speech)
+
+head(unit2)
 ```
 
 
@@ -46,12 +52,15 @@ words_to_ignore = c('mr', 'unit','unanim', 'don', 'ask', 'presid','madam', 'amer
 #other lists:
 source("./word_lists.R") #file containing list of words
 ignore_list = c(words_to_ignore, singletons, additional_words1, additional_words2, function_words)
+
+list_of_1500_csv <- read_csv("../../Data/list_of_1500words.csv")
+list_of_1500 <- as.character(list_of_1500_csv['word']$word)
 ```
 
 ```{r}
 # test differences between two test unit
-source("./two_unit_test.R") #file containing test routine
-HC <- two_unit_test(unit1, unit2, ignore_list)
+source("./two_unit_test_new.R") #file containing test routine
+HC <- two_unit_test_new(unit1, unit2, list_of_1500)
 max(HC$zz)
 #67.1053824015321  suggest high difference in words used in speeches by each party
 ```
