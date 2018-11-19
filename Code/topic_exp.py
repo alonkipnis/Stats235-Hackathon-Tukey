@@ -18,13 +18,15 @@ print("Starting from {}, with {} total months considered".format(saved_dates[0],
 
 df = pd.read_csv(vocab_csv, encoding = 'latin1')
 vocab_list = list(df['word'])   # list of words to count
+topic_25_list = pd.read_csv(topic_25_csv, encoding = 'latin1')
+topic_75_list = pd.read_csv(topic_75_csv, encoding = 'latin1')
 
-intervals = [6, 12]   # intervals used for text
-params = build_params(intervals, nummonths)
+intervals = [3, 6, 12]         # intervals used for topics
+params = build_params(intervals, nummonths, [topic_25_list, topic_75_list])
 print("Attempting to run {} jobs".format(len(params)))
 
 
 # Optimized for CJ parrun
 for k in range(len(params)):
     param = params[k]
-    run_text_experiment(infile, param[0], param[1], saved_breaks, saved_dates, vocab_list, param[2])
+    run_topic_experiment(infile, param[0], param[1], saved_breaks, saved_dates, param[3], param[2])
