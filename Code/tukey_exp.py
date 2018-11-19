@@ -8,7 +8,7 @@ from exp_methods import *
 
  
 # Experimental parameters / setup
-skiplines = 195     #  48 to start from 198701 --- beginning
+skiplines =  48     #  48 to start from 198701 --- beginning
                     # 195 to start from 200001 --- millenium
                     # 367 to start from 201501 --- 114th Congress
 # line_breaks, dates = calculate_line_breaks(infile, skiplines)
