@@ -10,7 +10,7 @@ if on_cluster:
     infile = os.path.expanduser('~/Data/speech_w_data.csv')
     vocab_csv = os.path.expanduser('~/Data/alt_list_of_words.csv')
     topic_25_csv = os.path.expanduser('~/Data/word_25topics_LDA.csv')
-    topic_75_csv = os.path.expanduser('~/Data/word_25topics_LDA.csv')
+    topic_75_csv = os.path.expanduser('~/Data/word_75topics_LDA.csv')
 else:
     sys.path.append('./DEP')
     infile = '../Data/speech_w_data.csv'
