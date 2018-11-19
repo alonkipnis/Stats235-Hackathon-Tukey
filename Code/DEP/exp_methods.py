@@ -2,7 +2,7 @@ import os, sys, re, time, csv
 import numpy as np 
 import pandas as pd
 
-from two_unit_test import two_unit_test#, two_unit_test_topics
+from two_unit_test import two_unit_test, two_unit_test_topics
 
 
 speech_count_thresh = 300
@@ -110,6 +110,7 @@ def run_text_experiment(infile, interval, i, line_breaks, dates, vocab_list, par
             writer = csv.writer(csvfile)
             line = [j - i, unit_dates[0], parties[0], unit_dates[1], parties[1], hc, ','.join([str(f) for f in features])]
             writer.writerow(line)
+        sys.exit(2)
 
 
 
@@ -149,3 +150,4 @@ def run_topic_experiment(infile, interval, i, line_breaks, dates, topic_list, pa
             writer = csv.writer(csvfile)
             line = [j - i, unit_dates[0], parties[0], dates[1], parties[1], hc, ','.join([str(f) for f in features])]
             writer.writerow(line)
+        # sys.exit(2)
