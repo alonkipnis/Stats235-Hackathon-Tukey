@@ -71,12 +71,13 @@ def two_unit_test(unit1,unit2, list_of_words):
     features = np.where(word_counts['flag'] == True)
     return (hc_star, features)
 
-def two_unit_test_topics(unit1,unit2, list_of_words, words_topics_mat):
+def two_unit_test_topics(unit1,unit2, words_topics):
 # Input: unit1, unit2, which are dataframes with columns: speech_id (integer) , speech (string)
-# Input: list_of_words is a pd Series of words to keep
-# Input: words_topics is a matrix, where (words_topics)_ij is importance of word i to topic j
+# Input: words_topics is a dataframe
 # Output: hc score, list of distinguishing features
-    list_of_words.sort_values() #sorts the list of words
+
+    words_topics_mat = words_topics.iloc[:,2:].values
+    list_of_words = words_topics['word']
     T = np.shape(words_topics_mat)[1] #num of topics
     tf_vectorizer = CountVectorizer(tokenizer=LemmaTokenizer(), vocabulary=list_of_words) 
     tf1 = tf_vectorizer.fit_transform(unit1['speech'])
