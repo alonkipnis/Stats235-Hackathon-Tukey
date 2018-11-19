@@ -29,29 +29,32 @@ def calculate_line_breaks(infile, skip_lines):
 
 
 
-# Make parameters to loop through
-def build_params(intervals, nummonths, topic_lists = None):
+# Make parameters to loop through for text test
+def build_params(intervals, nummonths):
     params_list = []
-    if topic_lists is None:
-        for interval in intervals:
-            for i in range(0, nummonths - 2 * interval, interval):
-            # for i in range(0, nummonths - interval, interval):
-                params_list.append([interval, i, ['N', 'N']])
-                params_list.append([interval, i, ['D', 'D']])
-                params_list.append([interval, i, ['D', 'R']])
-                params_list.append([interval, i, ['R', 'D']])
-                params_list.append([interval, i, ['R', 'R']])
-    else:
-        for interval in intervals:
-            for i in range(0, nummonths - 2 * interval, interval):
-                for topic in topic_lists:
-                    params_list.append([interval, i, ['N', 'N'], topic])
-                    params_list.append([interval, i, ['D', 'D'], topic])
-                    params_list.append([interval, i, ['D', 'R'], topic])
-                    params_list.append([interval, i, ['R', 'D'], topic])
-                    params_list.append([interval, i, ['R', 'R'], topic])
+    for interval in intervals:
+        for i in range(0, nummonths - 2 * interval, interval):
+        # for i in range(0, nummonths - interval, interval):
+            params_list.append([interval, i, ['N', 'N']])
+            params_list.append([interval, i, ['D', 'D']])
+            params_list.append([interval, i, ['D', 'R']])
+            params_list.append([interval, i, ['R', 'D']])
+            params_list.append([interval, i, ['R', 'R']])
     return params_list
 
+
+# Make parameters to loop through for topic test
+def build_topic_params(intervals, nummonths, topic_lists):
+    params_list = []
+    for interval in intervals:
+        for i in range(0, nummonths - 2 * interval, interval):
+            for topic in topic_lists:
+                params_list.append([interval, i, ['N', 'N'], topic])
+                params_list.append([interval, i, ['D', 'D'], topic])
+                params_list.append([interval, i, ['D', 'R'], topic])
+                params_list.append([interval, i, ['R', 'D'], topic])
+                params_list.append([interval, i, ['R', 'R'], topic])
+    return params_list
 
 
 # Run an experiment with a set of parameters

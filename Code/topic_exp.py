@@ -31,13 +31,11 @@ saved_breaks, saved_dates = word_lists.line_breaks[skiplines:], word_lists.dates
 nummonths = len(saved_dates)
 print("Starting from {}, with {} total months considered".format(saved_dates[0], nummonths))
 
-
 topic_25_df = pd.read_csv(topic_25_csv, encoding = 'latin1')
 topic_75_df = pd.read_csv(topic_75_csv, encoding = 'latin1')
 
-
 intervals = [6, 12]         # intervals used for topics
-params = build_params(intervals, nummonths, [topic_25_df, topic_75_df])
+params = build_topic_params(intervals, nummonths, [topic_25_df, topic_75_df])
 print("Attempting to run {} jobs".format(len(params)))
 
 
