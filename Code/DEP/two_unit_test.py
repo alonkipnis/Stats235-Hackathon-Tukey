@@ -3,21 +3,19 @@ import pandas as pd
 import numpy as np
 from HC_aux import hc_vals
 
-from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
 
 import re
-from nltk import word_tokenize          
-from nltk.stem import SnowballStemmer 
-import Stemmer
+import snowballstemmer 
 class LemmaTokenizer(object):
     def __init__(self):
-         self.wnl = Stemmer.Stemmer('english')
+         self.wnl = snowballstemmer.stemmer('english')
     def __call__(self, doc):
         doc = re.sub(r'[^A-Za-z0-9\s]',r' ',doc)
         doc = re.sub(r'\n',r' ',doc)
         doc = re.sub(r'[0-9]',r' ',doc)
         #doc = re.sub(r'[a-z]\040' ,r'',doc) #remove singletons
-        return word_tokenize(self.wnl.stemWord(doc))
+        return self.wnl.stemWords(doc.split())
 
 import scipy.stats as stats
 from HC_aux import hc_vals
@@ -68,7 +66,7 @@ def two_unit_test(unit1,unit2, list_of_words):
                                                         row['T2']), axis=1)
     
     #Pass in pval2, from binomial test, into HC function
-    hc_star, p_val_star  = hc_vals(word_counts['pval'], alpha = 0.25)
+    hc_star, p_val_star  = hc_vals(word_counts['pval'], alpha = 0.35)
     word_counts['flag'] = word_counts['pval'] < p_val_star
     features = np.where(word_counts['flag'] == True)
     return (hc_star, features)
