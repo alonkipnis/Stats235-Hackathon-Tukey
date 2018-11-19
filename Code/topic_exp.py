@@ -2,7 +2,7 @@ import os, sys, re, time, csv
 import numpy as np 
 import pandas as pd
 
-sys.path.append('./DEP')
+# sys.path.append('./DEP')
 import word_lists
 from exp_methods import *
 
@@ -29,4 +29,4 @@ print("Attempting to run {} jobs".format(len(params)))
 # Optimized for CJ parrun
 for k in range(len(params)):
     param = params[k]
-    run_topic_experiment(infile, param[0], param[1], saved_breaks, saved_dates, vocab_list, param[3], param[2])
+    run_topic_experiment(infile, param[0], param[1], saved_breaks, saved_dates, param[3], param[2])
