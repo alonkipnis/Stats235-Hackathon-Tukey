@@ -40,6 +40,6 @@ print("Attempting to run {} jobs".format(len(params)))
 
 
 # Optimized for CJ parrun
-for k in range(len(params)):
+for k in range(820):
     param = params[k]
-    run_topic_experiment(infile, param[0], param[1], saved_breaks, saved_dates, param[3], param[2], datanames)
+    run_topic_experiment(infile, param[0], param[1], saved_breaks, saved_dates, param[3], param[2], datanames, on_cluster)

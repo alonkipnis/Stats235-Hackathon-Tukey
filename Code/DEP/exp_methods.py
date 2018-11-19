@@ -100,7 +100,7 @@ def run_text_experiment(infile, interval, i, line_breaks, dates, vocab_list, par
 
 
 # Run an experiment with NN clustering for topic assignment
-def run_topic_experiment(infile, interval, i, line_breaks, dates, topics_df, parties, datanames):
+def run_topic_experiment(infile, interval, i, line_breaks, dates, topics_df, parties, datanames, on_cluster):
     for j in range(i + interval, len(dates) - interval, interval):
         print("Comparing topic in units {} and {} between {} parties...".format(dates[i], dates[j], parties))
         unit1 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[i], nrows = line_breaks[i+interval] - line_breaks[i], names = datanames)
@@ -136,4 +136,3 @@ def run_topic_experiment(infile, interval, i, line_breaks, dates, topics_df, par
             writer = csv.writer(csvfile)
             line = [j - i, unit_dates[0], parties[0], unit_dates[1], parties[1], hc, ','.join([str(f) for f in features])]
             writer.writerow(line)
-        sys.exit(2)

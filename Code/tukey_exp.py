@@ -2,7 +2,7 @@ import os, sys, re, time, csv
 import numpy as np 
 import pandas as pd
 
-on_cluster = False
+on_cluster = True
 resnames = ["Interval", "Date1", "Party1", "Affil1", "Date2", "Party2", "Affil2", "HC_score", "Features"]
 datanames = ['speech_id', 'date', 'congress_id', 'chamber', 'party', 'speech']
 infile, vocab_csv, topic_25_csv, topic_75_csv = None, None, None, None

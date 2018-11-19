@@ -1,9 +1,24 @@
 import os, sys, re, time, csv
 import numpy as np 
 import pandas as pd
+on_cluster = True
+resnames = ["Interval", "Date1", "Party1", "Affil1", "Date2", "Party2", "Affil2", "HC_score", "Features"]
+datanames = ['speech_id', 'date', 'congress_id', 'chamber', 'party', 'speech']
+infile, vocab_csv, topic_25_csv, topic_75_csv = None, None, None, None
+if on_cluster:
+    infile = os.path.expanduser('~/Data/speech_w_data.csv')
+    vocab_csv = os.path.expanduser('~/Data/alt_list_of_words.csv')
+    topic_25_csv = os.path.expanduser('~/Data/word_25topics_LDA.csv')
+    topic_75_csv = os.path.expanduser('~/Data/word_25topics_LDA.csv')
+else:
+    sys.path.append('./DEP')
+    infile = '../Data/speech_w_data.csv'
+    vocab_csv = '../Data/alt_list_of_words.csv'
+    topic_25_csv = '../Data/word_25topics_LDA.csv'
+    topic_75_csv = '../Data/word_75topics_LDA.csv'
 import word_lists
 from exp_methods import *
-skiplines = 48     
+skiplines =  48     
 saved_breaks, saved_dates = word_lists.line_breaks[skiplines:], word_lists.dates[skiplines:]
 nummonths = len(saved_dates)
 print("Starting from {}, with {} total months considered".format(saved_dates[0], nummonths))
