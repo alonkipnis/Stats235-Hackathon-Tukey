@@ -2,11 +2,11 @@ import os, sys, re, time, csv
 import numpy as np 
 import pandas as pd
 
-from two_unit_test import two_unit_test#, two_unit_test_topics
+from two_unit_test import two_unit_test, two_unit_test_topics
 
 
 speech_count_thresh = 300
-on_cluster = True
+on_cluster = False
 infile, vocab_csv, topic_25_csv, topic_75_csv = None, None, None, None
 if on_cluster:
     infile = os.path.expanduser('~/Data/speech_w_data.csv')
@@ -114,7 +114,7 @@ def run_text_experiment(infile, interval, i, line_breaks, dates, vocab_list, par
 
 
 # Run an experiment with NN clustering for topic assignment
-def run_topic_experiment(infile, interval, i, line_breaks, dates, topic_list, parties):
+def run_topic_experiment(infile, interval, i, line_breaks, dates, vocab_list, topic_list, parties):
     for j in range(i + interval, len(dates) - interval, interval):
         print("Comparing topic in units {} and {} between {} parties...".format(dates[i], dates[j], parties))
         unit1 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[i], nrows = line_breaks[i+interval] - line_breaks[i], names = datanames)
@@ -133,10 +133,10 @@ def run_topic_experiment(infile, interval, i, line_breaks, dates, topic_list, pa
             comp_unit2 = unit2.loc[(unit2.party == parties[1]), ['speech_id', 'speech']]
 
         hc, features = None, None
-        try:
-            hc, features = two_unit_test_topics(comp_unit1, comp_unit2, topic_list)
-        except:
-            continue
+        # try:
+        hc, features = two_unit_test_topics(comp_unit1, comp_unit2, topic_list)
+        # except:
+            # continue
 
         # Write results to file
         outfile = None
@@ -149,3 +149,4 @@ def run_topic_experiment(infile, interval, i, line_breaks, dates, topic_list, pa
             writer = csv.writer(csvfile)
             line = [j - i, unit_dates[0], parties[0], dates[1], parties[1], hc, ','.join([str(f) for f in features])]
             writer.writerow(line)
+        sys.exit(2)
