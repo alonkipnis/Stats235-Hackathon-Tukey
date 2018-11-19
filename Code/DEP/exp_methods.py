@@ -2,7 +2,7 @@ import os, sys, re, time, csv
 import numpy as np 
 import pandas as pd
 
-from two_unit_test import two_unit_test
+from two_unit_test import two_unit_test#, two_unit_test_topics
 
 
 speech_count_thresh = 300
@@ -10,12 +10,12 @@ on_cluster = True
 infile, vocab_csv, topic_25_csv, topic_75_csv = None, None, None, None
 if on_cluster:
     infile = os.path.expanduser('~/Data/speech_w_data.csv')
-    vocab_csv = os.path.expanduser('~/Data/list_of_1500words.csv')
+    vocab_csv = os.path.expanduser('~/Data/alt_list_of_words.csv')
     topic_25_csv = os.path.expanduser('~/Data/word_25topics_LDA.csv')
     topic_75_csv = os.path.expanduser('~/Data/word_25topics_LDA.csv')
 else:
     infile = '../Data/speech_w_data.csv'
-    vocab_csv = '../Data/list_of_1500words.csv'
+    vocab_csv = '../Data/alt_list_of_words.csv'
     topic_25_csv = '../Data/word_25topics_LDA.csv'
     topic_75_csv = '../Data/word_75topics_LDA.csv'
 
@@ -134,7 +134,7 @@ def run_topic_experiment(infile, interval, i, line_breaks, dates, topic_list, pa
 
         hc, features = None, None
         try:
-            hc, features = two_unit_test(comp_unit1, comp_unit2, vocab)
+            hc, features = two_unit_test_topics(comp_unit1, comp_unit2, topic_list)
         except:
             continue
 
