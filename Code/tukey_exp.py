@@ -8,7 +8,11 @@ from exp_methods import *
 
  
 # Experimental parameters / setup
+<<<<<<< HEAD
 skiplines =  48     #  48 to start from 198701 --- beginning
+=======
+skiplines = 48     #  48 to start from 198701 --- beginning
+>>>>>>> 485e177bbacb71159f261e7cfa9f7574f5130fed
                     # 195 to start from 200001 --- millenium
                     # 367 to start from 201501 --- 114th Congress
 # line_breaks, dates = calculate_line_breaks(infile, skiplines)
