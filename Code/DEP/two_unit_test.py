@@ -3,21 +3,19 @@ import pandas as pd
 import numpy as np
 from HC_aux import hc_vals
 
-from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
 
 import re
-from nltk import word_tokenize          
-from nltk.stem import SnowballStemmer 
-import Stemmer
+import snowballstemmer 
 class LemmaTokenizer(object):
     def __init__(self):
-         self.wnl = Stemmer.Stemmer('english')
+         self.wnl = snowballstemmer.stemmer('english')
     def __call__(self, doc):
         doc = re.sub(r'[^A-Za-z0-9\s]',r' ',doc)
         doc = re.sub(r'\n',r' ',doc)
         doc = re.sub(r'[0-9]',r' ',doc)
         #doc = re.sub(r'[a-z]\040' ,r'',doc) #remove singletons
-        return word_tokenize(self.wnl.stemWord(doc))
+        return self.wnl.stemWords(doc.split())
 
 import scipy.stats as stats
 from HC_aux import hc_vals
