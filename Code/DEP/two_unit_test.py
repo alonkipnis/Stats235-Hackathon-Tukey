@@ -42,7 +42,6 @@ def get_pval2(freq_x, freq_y,total_x,total_y, min_counts = 10):
     return pval2
 
 
-
 def two_unit_test(unit1,unit2, list_of_words):
 # Input: unit1, unit2, which are dataframes with columns: speech_id (integer) , speech (string)
 # Input: lists_of_words = features
