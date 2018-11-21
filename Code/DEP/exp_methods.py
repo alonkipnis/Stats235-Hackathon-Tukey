@@ -155,7 +155,8 @@ def run_experiment2(infile, interval, i, line_breaks, dates,
         with open(outfile, 'a', newline = '') as csvfile:
             writer = csv.writer(csvfile)
             line = [unit_dates[0], parties[0], unit_dates[1], parties[1], 
-            hc_words, hc_words_alt, hc_t25, hc_t25_alt, hc_t50, hc_t50_alt, hc_t75, hc_t75_alt]
+                    hc_words, hc_words_alt, hc_t25, hc_t25_alt, hc_t50,
+                     hc_t50_alt, hc_t75, hc_t75_alt, hc_t75_top3, hc_t75_top3_alt]
             writer.writerow(line)
 
 
