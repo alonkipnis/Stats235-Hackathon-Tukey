@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 from two_unit_test import two_unit_test, two_unit_test_topics
-
+from two_unit_test_full import test_words, test_topics, test_topics_top3
 
 # Calculates the line breaks for each month of data
 def calculate_line_breaks(infile, skip_lines):
@@ -97,6 +97,63 @@ def run_text_experiment(infile, interval, i, line_breaks, dates, vocab_list, par
             line = [j - i, unit_dates[0], parties[0], unit_dates[1], parties[1], hc, ','.join([str(f) for f in features])]
             writer.writerow(line)
 
+def run_experiment2(infile, interval, i, line_breaks, dates, vocab, parties, datanames):
+    for j in range(i + interval, len(dates) - interval, interval):
+    # for j in range(i, len(dates) - interval, interval):
+        print("Comparing text in units {} and {} between {} parties...".format(dates[i], dates[j], parties))
+        unit1 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[i], nrows = line_breaks[i+interval] - line_breaks[i], names = datanames)
+        unit2 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[j], nrows = line_breaks[j+interval] - line_breaks[j], names = datanames)
+
+        # Stop early if there's not enough speeches
+        speech_count_thresh = 300
+        if unit1.shape[0] < speech_count_thresh or unit2.shape[0] < speech_count_thresh:
+            continue
+        
+        comp_unit1, comp_unit2 = None, None
+        if parties == ['N', 'N']:
+            comp_unit1 = unit1.loc[:, ['speech_id', 'tf-idf', 'topic25', 'topic50', 'topic75' ,'topic75_top3']]
+            comp_unit2 = unit2.loc[:, ['speech_id', 'tf-idf', 'topic25', 'topic50', 'topic75' ,'topic75_top3']]
+        else:
+            comp_unit1 = unit1.loc[(unit1.party == parties[0]), ['speech_id', 'tf-idf', 'topic25', 'topic50', 'topic75' ,'topic75_top3']]
+            comp_unit2 = unit2.loc[(unit2.party == parties[1]), ['speech_id', 'tf-idf', 'topic25', 'topic50', 'topic75' ,'topic75_top3']]
+
+        # tf-idf word counting test
+        hc_words, hc_words_alt = None, None
+        try:
+            hc_words, hc_words_alt = list(test_words(unit1, unit2, vocab = vocab).loc[0,['hc', 'hc_alt']])
+        except:
+            continue
+
+        # topic counting test
+        hc_t25, hc_t50, hc_t75 = None, None, None
+        hc_t25_alt, hc_t50_alt, hc_t75_alt = None, None, None
+        hc_t75_top3, hc_t75_top3_alt = None, None
+        try:
+            hc_t25, hc_t25_alt = list(test_topics(unit1, unit2, by = 'topic25').loc[0,['hc', 'hc_alt']])
+            hc_t50, hc_t50_alt = list(test_topics(unit1, unit2, by = 'topic50').loc[0,['hc', 'hc_alt']])
+            hc_t75, hc_t75_alt = list(test_topics(unit1, unit2, by = 'topic75').loc[0,['hc', 'hc_alt']])
+        except:
+            continue
+
+        # top_3 topic counting test
+        try:
+            hc_t75_top3, hc_t75_top3_alt = list(test_topics_top3(unit1, unit2).loc[0,['hc', 'hc_alt']])
+        except:
+            continue
+
+
+        # Write results to file
+        outfile = None
+        if on_cluster:
+            outfile = os.path.expanduser('~/Data/results_{}_{}_{}.csv'.format(interval, parties[0], parties[1]))
+        else:
+            outfile = '../Data/results_{}_{}_{}.csv'.format(interval, parties[0], parties[1])
+        unit_dates = [str(unit1.date[2])[:6], str(unit2.date[2])[:6]]
+        with open(outfile, 'a', newline = '') as csvfile:
+            writer = csv.writer(csvfile)
+            line = [unit_dates[0], parties[0], unit_dates[1], parties[1],
+             hc_t25, hc_alt, hc_t50, hc_t50_alt, hc_t75, hc_t75_alt]
+            writer.writerow(line)
 
 
 # Run an experiment with NN clustering for topic assignment
