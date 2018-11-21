@@ -117,8 +117,10 @@ def run_experiment2(infile, interval, i, line_breaks, dates,
             comp_unit1 = unit1.loc[:, ['speech_id', 'tf-idf', 'topic25', 'topic50', 'topic75' ,'topic75_top3']]
             comp_unit2 = unit2.loc[:, ['speech_id', 'tf-idf', 'topic25', 'topic50', 'topic75' ,'topic75_top3']]
         else:
-            comp_unit1 = unit1.loc[(unit1.party == parties[0]), ['speech_id', 'tf-idf', 'topic25', 'topic50', 'topic75' ,'topic75_top3']]
-            comp_unit2 = unit2.loc[(unit2.party == parties[1]), ['speech_id', 'tf-idf', 'topic25', 'topic50', 'topic75' ,'topic75_top3']]
+            comp_unit1 = unit1.loc[(unit1.party == parties[0]),
+                 ['speech_id', 'tf-idf', 'topic25', 'topic50', 'topic75' ,'topic75_top3']]
+            comp_unit2 = unit2.loc[(unit2.party == parties[1]),
+                 ['speech_id', 'tf-idf', 'topic25', 'topic50', 'topic75' ,'topic75_top3']]
 
         # tf-idf word counting test
         hc_words, hc_words_alt = None, None
@@ -135,15 +137,11 @@ def run_experiment2(infile, interval, i, line_breaks, dates,
             hc_t25, hc_t25_alt = list(test_topics(unit1, unit2, by = 'topic25').loc[0,['hc', 'hc_alt']])
             hc_t50, hc_t50_alt = list(test_topics(unit1, unit2, by = 'topic50').loc[0,['hc', 'hc_alt']])
             hc_t75, hc_t75_alt = list(test_topics(unit1, unit2, by = 'topic75').loc[0,['hc', 'hc_alt']])
-        except:
-            continue
-
-        # top_3 topic counting test
-        try:
+            # top_3 topic counting test
             hc_t75_top3, hc_t75_top3_alt = list(test_topics_top3(unit1, unit2).loc[0,['hc', 'hc_alt']])
         except:
             continue
-
+    
 
         # Write results to file
         outfile = None

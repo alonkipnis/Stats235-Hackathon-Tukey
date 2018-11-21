@@ -38,6 +38,7 @@ intervals = [6, 12]   # intervals used for text
 params = build_params(intervals, nummonths)
 print("Attempting to run {} jobs".format(len(params)))
 
+
 # Optimized for CJ parrun
 for k in range(len(params)):
     param = params[k]
