@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 from two_unit_test import two_unit_test, two_unit_test_topics
-from two_unit_test_full import test_words, test_topics, test_topics_top3
+from two_unit_test_full import test_tfidf, test_topics, test_topics_top3
 
 # Calculates the line breaks for each month of data
 def calculate_line_breaks(infile, skip_lines):
@@ -97,12 +97,15 @@ def run_text_experiment(infile, interval, i, line_breaks, dates, vocab_list, par
             line = [j - i, unit_dates[0], parties[0], unit_dates[1], parties[1], hc, ','.join([str(f) for f in features])]
             writer.writerow(line)
 
-def run_experiment2(infile, interval, i, line_breaks, dates, vocab, parties, datanames):
+def run_experiment2(infile, interval, i, line_breaks, dates,
+                     vocab, parties, datanames, on_cluster = False):
     for j in range(i + interval, len(dates) - interval, interval):
     # for j in range(i, len(dates) - interval, interval):
         print("Comparing text in units {} and {} between {} parties...".format(dates[i], dates[j], parties))
-        unit1 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[i], nrows = line_breaks[i+interval] - line_breaks[i], names = datanames)
-        unit2 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[j], nrows = line_breaks[j+interval] - line_breaks[j], names = datanames)
+        unit1 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[i],
+             nrows = line_breaks[i+interval] - line_breaks[i], names = datanames)
+        unit2 = pd.read_csv(infile, encoding = 'latin1', skiprows = line_breaks[j],
+             nrows = line_breaks[j+interval] - line_breaks[j], names = datanames)
 
         # Stop early if there's not enough speeches
         speech_count_thresh = 300
@@ -120,7 +123,7 @@ def run_experiment2(infile, interval, i, line_breaks, dates, vocab, parties, dat
         # tf-idf word counting test
         hc_words, hc_words_alt = None, None
         try:
-            hc_words, hc_words_alt = list(test_words(unit1, unit2, vocab = vocab).loc[0,['hc', 'hc_alt']])
+            hc_words, hc_words_alt = list(test_tfidf(unit1, unit2, vocab = vocab).loc[0,['hc', 'hc_alt']])
         except:
             continue
 
@@ -152,7 +155,7 @@ def run_experiment2(infile, interval, i, line_breaks, dates, vocab, parties, dat
         with open(outfile, 'a', newline = '') as csvfile:
             writer = csv.writer(csvfile)
             line = [unit_dates[0], parties[0], unit_dates[1], parties[1],
-             hc_t25, hc_alt, hc_t50, hc_t50_alt, hc_t75, hc_t75_alt]
+             hc_t25, hc_t25_alt, hc_t50, hc_t50_alt, hc_t75, hc_t75_alt]
             writer.writerow(line)
 
 

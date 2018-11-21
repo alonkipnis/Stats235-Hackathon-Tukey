@@ -168,7 +168,8 @@ def test_topics(unit1, unit2, by, min_counts = 25, ignore_list = [], alpha = 0.4
     df2 = pd.DataFrame({'topic' : cnt2.index, 'count' : cnt2.values})
 
     cnt = pd.DataFrame()
-    cnt['topic'] = range(75)
+    cnt['topic'] = range(75) #75 is max number of topics. empty entries 
+                             #will be removed by by the 'join' operation
     counts = pd.concat([cnt, cnt1, cnt2], axis = 1, join = 'inner', names = ['topic', 'n1', 'n2'])
     counts.columns = ['topic', 'n1', 'n2']
     counts['T1'] = counts['n1'].sum()
@@ -245,53 +246,15 @@ def two_unit_test_topics_full(unit1,unit2, term_topic_df, ignore_topics = [], al
     counts.loc[counts['topic'].isin(ignore_topics),'flag'] = np.nan
     return counts
 
-def test_words(unit1, unit2, vocab, min_counts = 25, ignore_list = [], alpha = 0.45) :
-    # Input: unit1, unit2, are dataframes with column: 'tf-idf'
-    # Input: vocab = list of words 
-    # Output: data frame: "word, n1, T1, n2, T2, pval, pval_z, hc"
-
-    from sklearn.feature_extraction.text import CountVectorizer
-    tf_vectorizer = CountVectorizer(vocabulary=vocab)
-    
-    tf1 = tf_vectorizer.fit_transform(unit1['tf-idf'])
-    tf2 = tf_vectorizer.fit_transform(unit2['tf-idf'])
-
-    counts = pd.DataFrame()
-    counts['term'] = vocab
-    counts['n1'] = np.array(tf1.sum(0))[0]
-    counts['n2'] = np.array(tf2.sum(0))[0]
-    counts['T1'] = counts['n1'].sum()
-    counts['T2'] = counts['n2'].sum()
-
-    #Joining unit1 and unit2 for the HC computation
-    counts['pval'] = counts.apply(lambda row: get_pval_bin(row['n1'], 
-                                                         row['n2'], 
-                                                         row['T1'],
-                                                        row['T2'],
-                                                        min_counts = min_counts), axis=1)
-
-    counts['pval_z'] = counts.apply(lambda row: get_pval_z(row['n1'], 
-                                                             row['n2'], 
-                                                             row['T1'],
-                                                            row['T2'], 
-                                                            min_counts = min_counts), axis=1)
-    
-    pv = counts[~counts['term'].isin(ignore_list)]['pval']
-    hc_star, p_val_star, hc_star_alt = hc_vals(pv, alpha = alpha)
-    counts['hc'] = hc_star
-    counts['hc_alt'] = hc_star_alt
-    counts['flag'] = counts['pval'] < p_val_star 
-    counts.loc[counts['term'].isin(ignore_list),'flag'] = np.nan
-    return counts
-
 def test_topics_top3(unit1, unit2, min_counts = 25, ignore_list = [], alpha = 0.45) :
+    #each speech represents 3 topics out of 75
     from sklearn.feature_extraction.text import CountVectorizer
     tf_vectorizer = CountVectorizer(tokenizer=myTokenizer(),  vocabulary=[str(i) for i in range(75)])
     tf1 = tf_vectorizer.fit_transform(unit1['topic75_top3'])
     tf2 = tf_vectorizer.fit_transform(unit2['topic75_top3'])
     
     counts = pd.DataFrame()
-    counts['topic'] = range(75)
+    counts['topic'] = range(75)  
     counts['n1'] = np.array(tf1.sum(0))[0]
     counts['n2'] = np.array(tf2.sum(0))[0]
     counts['T1'] = counts['n1'].sum()
