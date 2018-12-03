@@ -152,8 +152,9 @@ def test_tfidf(unit1, unit2, vocab, min_counts = 25, ignore_list = [], alpha = 0
     counts['hc'] = hc_star
     counts['hc_alt'] = hc_star_alt
     counts['flag'] = counts['pval'] < p_val_star 
+    features = np.where(counts['flag'] == True)
     counts.loc[counts['term'].isin(ignore_list),'flag'] = np.nan
-    return counts
+    return counts, features[0]
 
 
 def test_topics(unit1, unit2, by, min_counts = 25, ignore_list = [], alpha = 0.45) :
@@ -193,8 +194,9 @@ def test_topics(unit1, unit2, by, min_counts = 25, ignore_list = [], alpha = 0.4
     counts['hc'] = hc_star
     counts['hc_alt'] = hc_star_alt
     counts['flag'] = counts['pval'] < p_val_star 
+    features = np.where(counts['flag'] == True)
     counts.loc[counts['topic'].isin(ignore_list),'flag'] = np.nan
-    return counts
+    return counts, features[0]
 
 def two_unit_test_topics_full(unit1,unit2, term_topic_df, ignore_topics = [], alpha = 0.45, min_counts = 5) :
     # Input: unit1, unit2, which are dataframes with columns: speech_id (integer) , speech (string)
@@ -278,8 +280,9 @@ def test_topics_top3(unit1, unit2, min_counts = 25, ignore_list = [], alpha = 0.
     counts['hc'] = hc_star
     counts['hc_alt'] = hc_star_alt
     counts['flag'] = counts['pval'] < p_val_star 
+    features = np.where(counts['flag'] == True)
     counts.loc[counts['topic'].isin(ignore_list),'flag'] = np.nan
-    return counts
+    return counts, features[0]
 
 
 def get_topic(unit, term_topic_df) :
