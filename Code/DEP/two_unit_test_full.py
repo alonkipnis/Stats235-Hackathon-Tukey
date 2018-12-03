@@ -18,25 +18,23 @@ def hc_vals(pv, alpha = 0.45):
     i_max = np.argmax(z[:i_lim])
     z_max = z[i_max]
 
-    if i_max + 1 == 1: #if optimal is at the first entry
+    i_max_star = i_max
+    if i_max_star == 0: #if optimal is at the first entry
         i_max_star = 1 + np.argmax(z[1:i_lim])
-        hc_star    = z[i_max_star]
-    else:
-        i_max_star = i_max
-        hc_star    = z_max
 
+    hc_star = z[i_max_star]
     p_star = ps[i_max_star]
     
-    i_max = np.argmax(z_alt[:i_lim])
-    z_max_alt = z_alt[i_max]
-    if i_max + 1 == 1: #if optimal is at the first entry
-        i_max_star = 1 + np.argmax(z_alt[1:i_lim])
-        hc_alt    = z_alt[i_max_star]
-    else:
-        i_max_star = i_max
-        hc_alt    = z_max_alt    
+    #compute HC_alt
+    i_max_alt = np.argmax(z_alt[:i_lim])
+    i_max_star_alt = i_max_alt
+    if i_max_star_alt == 0: #if optimal is at the first entry
+        i_max_star_alt = 1 + np.argmax(z_alt[1:i_lim])
 
-    return hc_star, p_star, hc_alt
+    hc_star_alt = z[i_max_star_alt]
+    p_star_alt = ps[i_max_star_alt]
+
+    return hc_star, p_star, hc_alt, p_star_alt
 
 
 def get_pval_bin(n1, n2, T1 ,T2, min_counts = 2):
@@ -110,10 +108,10 @@ def two_unit_test_words_full(unit1, unit2, vocabulary, alpha = 0.45, min_counts 
                                                         row['T2'], 
                                                         min_counts = min_counts), axis=1)
 
-    hc_star, p_val_star, hc_star_alt = hc_vals(counts['pval'], alpha = alpha)
+    hc_star, p_val_star, hc_star_alt, p_val_star_alt = hc_vals(counts['pval'], alpha = alpha)
     counts['hc'] = hc_star
     counts['hc_alt'] = hc_star_alt
-    counts['flag'] = counts['pval'] < p_val_star
+    counts['flag'] = counts['pval'] < p_val_star_alt
     return counts
 
 def test_tfidf(unit1, unit2, vocab, min_counts = 25, ignore_list = [], alpha = 0.45) :
@@ -148,10 +146,10 @@ def test_tfidf(unit1, unit2, vocab, min_counts = 25, ignore_list = [], alpha = 0
                                                         min_counts = min_counts), axis=1)
     
     pv = counts[~counts['term'].isin(ignore_list)]['pval']
-    hc_star, p_val_star, hc_star_alt = hc_vals(pv, alpha = alpha)
+    hc_star, p_val_star, hc_star_alt, p_val_star_alt = hc_vals(pv, alpha = alpha)
     counts['hc'] = hc_star
     counts['hc_alt'] = hc_star_alt
-    counts['flag'] = counts['pval'] < p_val_star 
+    counts['flag'] = counts['pval'] < p_val_star_alt
     counts.loc[counts['term'].isin(ignore_list),'flag'] = np.nan
     return counts
 
@@ -189,10 +187,10 @@ def test_topics(unit1, unit2, by, min_counts = 25, ignore_list = [], alpha = 0.4
                                                             min_counts = min_counts), axis=1)
     
     pv = counts[~counts['topic'].isin(ignore_list)]['pval']
-    hc_star, p_val_star, hc_star_alt = hc_vals(pv, alpha = alpha)
+    hc_star, p_val_star, hc_star_alt, p_val_star_alt = hc_vals(pv, alpha = alpha)
     counts['hc'] = hc_star
     counts['hc_alt'] = hc_star_alt
-    counts['flag'] = counts['pval'] < p_val_star 
+    counts['flag'] = counts['pval'] < p_val_star_alt 
     counts.loc[counts['topic'].isin(ignore_list),'flag'] = np.nan
     return counts
 
@@ -239,10 +237,10 @@ def two_unit_test_topics_full(unit1,unit2, term_topic_df, ignore_topics = [], al
 
     #Pass in pval from binomial test into HC function
     pv = counts[~counts['topic'].isin(ignore_topics)]['pval']
-    hc_star, p_val_star, hc_star_alt = hc_vals(pv, alpha = alpha)
+    hc_star, p_val_star, hc_star_alt, p_val_star_alt = hc_vals(pv, alpha = alpha)
     counts['hc'] = hc_star
     counts['hc_alt'] = hc_star_alt
-    counts['flag'] = counts['pval'] < p_val_star 
+    counts['flag'] = counts['pval'] < p_val_star_alt 
     counts.loc[counts['topic'].isin(ignore_topics),'flag'] = np.nan
     return counts
 
@@ -274,10 +272,10 @@ def test_topics_top3(unit1, unit2, min_counts = 25, ignore_list = [], alpha = 0.
                                                             min_counts = min_counts), axis=1)
     
     pv = counts[~counts['topic'].isin(ignore_list)]['pval']
-    hc_star, p_val_star, hc_star_alt = hc_vals(pv, alpha = alpha)
+    hc_star, p_val_star, hc_star_alt, p_val_star_alt = hc_vals(pv, alpha = alpha)
     counts['hc'] = hc_star
     counts['hc_alt'] = hc_star_alt
-    counts['flag'] = counts['pval'] < p_val_star 
+    counts['flag'] = counts['pval'] < p_val_star_alt 
     counts.loc[counts['topic'].isin(ignore_list),'flag'] = np.nan
     return counts
 
