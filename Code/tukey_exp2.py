@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 
 on_cluster = True
-on_cluster = False
 resnames = ["Interval", "Date1", "Party1", "Affil1", "Date2", "Party2", "Affil2", "HC_score", "Features"]
 datanames = ['speech_id', 'date', 'congress_id', 'chamber', 'party',
              'tf-idf', 'topic25', 'topic50', 'topic75', 'topic75_top3']
@@ -16,9 +15,11 @@ if on_cluster:
 else:
     sys.path.append('./DEP')
     #infile = '../Data/speech_w_data.csv'
-    infile = '../Data/speeches_1464words_tfidf.csv'
+    #infile = '../Data/speeches_1464words_tfidf.csv'
+    infile = os.path.expanduser('~/Data/speeches_1464words_tfidf.csv')
+    vocab_csv = os.path.expanduser('~/Data/1464words_unstemmed.csv')
     #vocab_csv = '../Data/alt_list_of_words.csv'
-    vocab_csv = '../Data/1464words_unstemmed.csv'
+    #vocab_csv = '../Data/1464words_unstemmed.csv'
     #topic_25_csv = '../Data/word_25topics_LDA.csv'
     #topic_75_csv = '../Data/word_75topics_LDA.csv'
 
@@ -45,4 +46,4 @@ print("Attempting to run {} jobs".format(len(params)))
 for k in range(len(params)):
     param = params[k]
     #run_text_experiment(infile, param[0], param[1], saved_breaks, saved_dates, vocab_list, param[2], datanames)
-    run_experiment2(infile, param[0], param[1], saved_breaks, saved_dates, vocab_list, param[2], datanames)
+    run_experiment2(infile, param[0], param[1], saved_breaks, saved_dates, vocab_list, param[2], datanames, on_cluster)

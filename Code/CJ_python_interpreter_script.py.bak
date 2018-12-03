@@ -3,19 +3,16 @@ import numpy as np
 import pandas as pd
 on_cluster = True
 resnames = ["Interval", "Date1", "Party1", "Affil1", "Date2", "Party2", "Affil2", "HC_score", "Features"]
-datanames = ['speech_id', 'date', 'congress_id', 'chamber', 'party', 'speech']
+datanames = ['speech_id', 'date', 'congress_id', 'chamber', 'party',
+             'tf-idf', 'topic25', 'topic50', 'topic75', 'topic75_top3']
 infile, vocab_csv, topic_25_csv, topic_75_csv = None, None, None, None
 if on_cluster:
-    infile = os.path.expanduser('~/Data/speech_w_data.csv')
-    vocab_csv = os.path.expanduser('~/Data/alt_list_of_words.csv')
-    topic_25_csv = os.path.expanduser('~/Data/word_25topics_LDA.csv')
-    topic_75_csv = os.path.expanduser('~/Data/word_25topics_LDA.csv')
+    infile = os.path.expanduser('~/Data/speeches_1464words_tfidf.csv')
+    vocab_csv = os.path.expanduser('~/Data/1464words_unstemmed.csv')
 else:
     sys.path.append('./DEP')
-    infile = '../Data/speech_w_data.csv'
-    vocab_csv = '../Data/alt_list_of_words.csv'
-    topic_25_csv = '../Data/word_25topics_LDA.csv'
-    topic_75_csv = '../Data/word_75topics_LDA.csv'
+    infile = os.path.expanduser('~/Data/speeches_1464words_tfidf.csv')
+    vocab_csv = os.path.expanduser('~/Data/1464words_unstemmed.csv')
 import word_lists
 from exp_methods import *
 skiplines =  48     
@@ -23,7 +20,7 @@ saved_breaks, saved_dates = word_lists.line_breaks[skiplines:], word_lists.dates
 nummonths = len(saved_dates)
 print("Starting from {}, with {} total months considered".format(saved_dates[0], nummonths))
 df = pd.read_csv(vocab_csv, encoding = 'latin1')
-vocab_list = list(df['word'])   # list of words to count
+vocab_list = list(df['term'])   # list of words to count
 intervals = [6, 12]   
 params = build_params(intervals, nummonths)
 print("Attempting to run {} jobs".format(len(params)))

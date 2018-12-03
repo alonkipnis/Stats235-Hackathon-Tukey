@@ -123,25 +123,34 @@ def run_experiment2(infile, interval, i, line_breaks, dates,
                  ['speech_id', 'tf-idf', 'topic25', 'topic50', 'topic75' ,'topic75_top3']]
 
         # tf-idf word counting test
-        hc_words, hc_words_alt = None, None
+        hc_words, hc_words_alt, f_words = None, None, None
         try:
-            hc_words, hc_words_alt = list(test_tfidf(unit1, unit2, vocab = vocab).loc[0,['hc', 'hc_alt']])
+            res, f_words = test_tfidf(unit1, unit2, vocab = vocab)
+            hc_words, hc_words_alt = list(res.loc[0,['hc', 'hc_alt']])
+            #print("Did TF-IDF")
         except:
             continue
+
 
         # topic counting test
         hc_t25, hc_t50, hc_t75 = None, None, None
         hc_t25_alt, hc_t50_alt, hc_t75_alt = None, None, None
         hc_t75_top3, hc_t75_top3_alt = None, None
+        f_t25, f_t50, f_t75, f_t75_top3 = None, None, None, None
         try:
-            hc_t25, hc_t25_alt = list(test_topics(unit1, unit2, by = 'topic25').loc[0,['hc', 'hc_alt']])
-            hc_t50, hc_t50_alt = list(test_topics(unit1, unit2, by = 'topic50').loc[0,['hc', 'hc_alt']])
-            hc_t75, hc_t75_alt = list(test_topics(unit1, unit2, by = 'topic75').loc[0,['hc', 'hc_alt']])
+            res_t25, f_t25 = test_topics(unit1, unit2, by = 'topic25')
+            res_t50, f_t50 = test_topics(unit1, unit2, by = 'topic50')
+            res_t75, f_t75 = test_topics(unit1, unit2, by = 'topic75')
+            res_t75_top3, f_t75_top3 = test_topics_top3(unit1, unit2)
+            hc_t25, hc_t25_alt = list(res_t25.loc[0,['hc', 'hc_alt']])
+            hc_t50, hc_t50_alt = list(res_t50.loc[0,['hc', 'hc_alt']])
+            hc_t75, hc_t75_alt = list(res_t75.loc[0,['hc', 'hc_alt']])
             # top_3 topic counting test
-            hc_t75_top3, hc_t75_top3_alt = list(test_topics_top3(unit1, unit2).loc[0,['hc', 'hc_alt']])
+            hc_t75_top3, hc_t75_top3_alt = list(res_t75_top3.loc[0,['hc', 'hc_alt']])
+            #print("Did topics")
         except:
             continue
-    
+
 
         # Write results to file
         outfile = None
@@ -154,7 +163,9 @@ def run_experiment2(infile, interval, i, line_breaks, dates,
             writer = csv.writer(csvfile)
             line = [unit_dates[0], parties[0], unit_dates[1], parties[1], 
                     hc_words, hc_words_alt, hc_t25, hc_t25_alt, hc_t50,
-                     hc_t50_alt, hc_t75, hc_t75_alt, hc_t75_top3, hc_t75_top3_alt]
+                    hc_t50_alt, hc_t75, hc_t75_alt, hc_t75_top3, hc_t75_top3_alt,
+                    ','.join([str(f) for f in f_words]), ','.join([str(f) for f in f_t25]), 
+                    ','.join([str(f) for f in f_t50]), ','.join([str(f) for f in f_t75]), ','.join([str(f) for f in f_t75_top3])]
             writer.writerow(line)
 
 
