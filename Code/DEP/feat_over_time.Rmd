@@ -1,0 +1,95 @@
+---
+title: "Analysis of features over time"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#First, load the data
+library(readr)
+library(tidytext)
+res_6_DD <- read_csv("~/Downloads/Results_enze_6_12_topics+features/results_6_D_D.csv", col_names = FALSE)
+res_6_DR <- read_csv("~/Downloads/Results_enze_6_12_topics+features/results_6_D_R.csv", col_names = FALSE)
+words_1464 <- as.character(read_csv("../../Data/1464words_unstemmed.csv")$term)
+#head(res_6_DD)
+head(subset(res_6_RR,is.na(X5)))
+```
+
+
+```{r}
+#Compute histogram of interesting features for words for first 10 years
+#and compare to histogram for next 10 years
+
+word_features_count <- c(0,1464)
+
+words_first_5y_DD <- res_6_DD %>% 
+  na.omit() %>% 
+  mutate(X1 = as.numeric(X1)) %>%
+  mutate(X3 = as.numeric(X3)) %>%
+  filter(X1 <= 199200, X3 <= 199200) %>% 
+  filter(X1 >= 198700, X3 >= 198700) %>%
+  mutate(words = strsplit(words,',')) %>%
+  unnest(words) %>%
+  mutate(words = as.numeric(words)) %>%
+  count(words, sort = TRUE) %>%
+  top_n(10, n) %>%
+  mutate(words = words_1464[words])
+
+words_first_5y_DR <- res_6_DR %>% 
+  na.omit() %>% 
+  mutate(X1 = as.numeric(X1)) %>%
+  mutate(X3 = as.numeric(X3)) %>%
+  filter(X1 <= 199200, X3 <= 199200) %>% 
+  filter(X1 >= 198700, X3 >= 198700) %>%
+  mutate(words = strsplit(words,',')) %>%
+  unnest(words) %>%
+  mutate(words = as.numeric(words)) %>%
+  count(words, sort = TRUE) %>%
+  top_n(10, n) %>%
+  mutate(words = words_1464[words])
+
+words_last_5y_DD <- res_6_DD %>% 
+  na.omit() %>% 
+  mutate(X1 = as.numeric(X1)) %>%
+  mutate(X3 = as.numeric(X3)) %>%
+  filter(X1 <= 201200, X3 <= 201200) %>% 
+  filter(X1 >= 200700, X3 >= 200700) %>%
+  mutate(words = strsplit(words,',')) %>%
+  unnest(words) %>%
+  mutate(words = as.numeric(words)) %>%
+  count(words, sort = TRUE) %>%
+  top_n(10, n) %>%
+  mutate(words = words_1464[words])
+
+words_last_5y_DR <- res_6_DR %>% 
+  na.omit() %>% 
+  mutate(X1 = as.numeric(X1)) %>%
+  mutate(X3 = as.numeric(X3)) %>%
+  filter(X1 <= 201200, X3 <= 201200) %>% 
+  filter(X1 >= 200700, X3 >= 200700) %>%
+  mutate(words = strsplit(words,',')) %>%
+  unnest(words) %>%
+  mutate(words = as.numeric(words)) %>%
+  count(words, sort = TRUE) %>%
+  top_n(10, n) %>%
+  mutate(words = words_1464[words])
+
+
+ggplot(first_5_yrs_DD, aes(x = reorder(features,n), y = n)) + geom_histogram(stat = "identity") + ggtitle('Words, 1987- 1997, DD') + theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+
+ggplot(first_5_yrs_DR, aes(x = reorder(features,n), y = n)) + geom_histogram(stat = "identity") + ggtitle('Words, 1987- 1997, DR') + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+ggplot(last_5_yrs_DD, aes(x = reorder(features,n), y = n)) + geom_histogram(stat = "identity") + ggtitle('Words, 1987- 1997, RR') + theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+
+```
+
+
+```{r}
+#Similar analysis to above, but for topics 25.
+
+
+```
+

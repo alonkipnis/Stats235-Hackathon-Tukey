@@ -1,0 +1,45 @@
+---
+title: "gen_topics_words"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+#Generate top 10 words for each topic
+topics_25  <- read_csv("../../Data/1464word_25topics_NMF.csv")
+topics_50 <- read_csv("../../Data/1464word_50topics_NMF.csv")
+topics_75 <- read_csv("../../Data/1464word_75topics_NMF.csv")
+
+
+topic_num <- c(25,50,75)
+for (k in 1:3) {
+  topics_words <- c()
+  if (k == 1) {
+    topics <- topics_25
+  } 
+  if (k == 2) {
+    topics <- topics_50
+  }
+  if (k == 3) {
+    topics <- topics_75
+  }
+  for (i in 1:topic_num[k]) {
+    col_idx <- i + 2
+    topic_i<- topics[,c(2,col_idx)]
+    colnames(topic_i) <- c('word','topic')
+    topic_i_sorted <- topic_i %>% 
+      top_n(10, topic) %>%
+      arrange(desc(topic))
+    topics_words <- append(topics_words, paste(unique(topic_i_sorted$word), collapse = ","))
+  }
+  topics_df <- data.frame(topics_words)
+  write.csv(topics_df, sprintf("../../Data/topics_%d_words.csv", topic_num[k]))
+}
+
+
+```
+

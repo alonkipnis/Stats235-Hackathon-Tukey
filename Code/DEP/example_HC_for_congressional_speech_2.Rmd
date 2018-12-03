@@ -11,7 +11,7 @@ Word frequency changes in congressional records with term frequency–inverse do
 
 ```{r}
 library(readr)
-raw.corpus <- read_csv("../Data//speech_w_data_example.csv")
+raw.corpus <- read_csv("../../Data//speech_w_data_example.csv")
 ```
 
 ```{r}
